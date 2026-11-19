@@ -1,0 +1,231 @@
+{
+  "id": 15,
+  "name": "Hidden Cargo",
+  "gridSize": {
+    "cols": 6,
+    "rows": 6
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "red",
+      "capacity": 8,
+      "x": 0.5,
+      "y": 0,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "cyan",
+      "capacity": 9,
+      "x": 2,
+      "y": 0.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "purple",
+      "capacity": 6,
+      "x": 3,
+      "y": 0.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "yellow",
+      "capacity": 8,
+      "x": 4.5,
+      "y": 0,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "green",
+      "capacity": 9,
+      "x": 0,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "pink",
+      "capacity": 6,
+      "x": 1,
+      "y": 1.5,
+      "direction": "down",
+      "type": "mystery",
+      "unlockAfter": 4
+    },
+    {
+      "id": "b7",
+      "color": "red",
+      "capacity": 8,
+      "x": 4,
+      "y": 1.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "cyan",
+      "capacity": 9,
+      "x": 5,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b9",
+      "color": "purple",
+      "capacity": 6,
+      "x": 0.5,
+      "y": 3,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b10",
+      "color": "yellow",
+      "capacity": 8,
+      "x": 4.5,
+      "y": 3,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b11",
+      "color": "green",
+      "capacity": 9,
+      "x": 0,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b12",
+      "color": "pink",
+      "capacity": 6,
+      "x": 1,
+      "y": 4.5,
+      "direction": "down",
+      "type": "mystery",
+      "unlockAfter": 5
+    },
+    {
+      "id": "b13",
+      "color": "red",
+      "capacity": 8,
+      "x": 4,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b14",
+      "color": "cyan",
+      "capacity": 9,
+      "x": 5,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "o1",
+      "x": 2,
+      "y": 2
+    },
+    {
+      "id": "o2",
+      "x": 3,
+      "y": 2
+    },
+    {
+      "id": "o3",
+      "x": 2,
+      "y": 4
+    },
+    {
+      "id": "o4",
+      "x": 3,
+      "y": 4
+    }
+  ],
+  "passengerQueue": [
+    {
+      "color": "yellow",
+      "count": 4
+    },
+    {
+      "color": "red",
+      "count": 8
+    },
+    {
+      "color": "yellow",
+      "count": 4
+    },
+    {
+      "color": "green",
+      "count": 9
+    },
+    {
+      "color": "cyan",
+      "count": 9
+    },
+    {
+      "color": "red",
+      "count": 8
+    },
+    {
+      "color": "green",
+      "count": 9
+    },
+    {
+      "color": "pink",
+      "count": 6
+    },
+    {
+      "color": "red",
+      "count": 8
+    },
+    {
+      "color": "purple",
+      "count": 12
+    },
+    {
+      "color": "cyan",
+      "count": 4
+    },
+    {
+      "color": "pink",
+      "count": 6
+    },
+    {
+      "color": "cyan",
+      "count": 4
+    },
+    {
+      "color": "yellow",
+      "count": 8
+    },
+    {
+      "color": "cyan",
+      "count": 10
+    }
+  ],
+  "trackShape": "snake",
+  "theme": "park",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": true,
+    "jumble": true
+  },
+  "undoLimit": 4
+}

@@ -1,0 +1,255 @@
+{
+  "id": 18,
+  "name": "Triple Vault",
+  "gridSize": {
+    "cols": 7,
+    "rows": 6
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "pink",
+      "capacity": 8,
+      "x": 0.5,
+      "y": 0,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "purple",
+      "capacity": 9,
+      "x": 2,
+      "y": 0.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "cyan",
+      "capacity": 10,
+      "x": 4,
+      "y": 0.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "orange",
+      "capacity": 6,
+      "x": 5.5,
+      "y": 0,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "green",
+      "capacity": 8,
+      "x": 0,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "blue",
+      "capacity": 9,
+      "x": 1,
+      "y": 1.5,
+      "direction": "down",
+      "type": "mystery",
+      "unlockAfter": 4
+    },
+    {
+      "id": "b7",
+      "color": "red",
+      "capacity": 8,
+      "x": 5,
+      "y": 1.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "pink",
+      "capacity": 8,
+      "x": 6,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b9",
+      "color": "purple",
+      "capacity": 9,
+      "x": 1.5,
+      "y": 3,
+      "direction": "left",
+      "type": "mystery",
+      "unlockAfter": 6
+    },
+    {
+      "id": "b10",
+      "color": "cyan",
+      "capacity": 10,
+      "x": 4.5,
+      "y": 3,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b11",
+      "color": "orange",
+      "capacity": 6,
+      "x": 0,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b12",
+      "color": "green",
+      "capacity": 8,
+      "x": 1,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b13",
+      "color": "blue",
+      "capacity": 9,
+      "x": 2,
+      "y": 4.5,
+      "direction": "down",
+      "type": "mystery",
+      "unlockAfter": 8
+    },
+    {
+      "id": "b14",
+      "color": "red",
+      "capacity": 8,
+      "x": 4,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b15",
+      "color": "pink",
+      "capacity": 8,
+      "x": 5,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b16",
+      "color": "purple",
+      "capacity": 9,
+      "x": 6,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "o1",
+      "x": 3,
+      "y": 0
+    },
+    {
+      "id": "o2",
+      "x": 3,
+      "y": 1
+    },
+    {
+      "id": "o3",
+      "x": 3,
+      "y": 2
+    },
+    {
+      "id": "o4",
+      "x": 2,
+      "y": 2
+    },
+    {
+      "id": "o5",
+      "x": 4,
+      "y": 2
+    }
+  ],
+  "passengerQueue": [
+    {
+      "color": "purple",
+      "count": 18
+    },
+    {
+      "color": "orange",
+      "count": 6
+    },
+    {
+      "color": "pink",
+      "count": 12
+    },
+    {
+      "color": "red",
+      "count": 8
+    },
+    {
+      "color": "pink",
+      "count": 4
+    },
+    {
+      "color": "green",
+      "count": 8
+    },
+    {
+      "color": "orange",
+      "count": 6
+    },
+    {
+      "color": "cyan",
+      "count": 5
+    },
+    {
+      "color": "pink",
+      "count": 8
+    },
+    {
+      "color": "cyan",
+      "count": 15
+    },
+    {
+      "color": "purple",
+      "count": 9
+    },
+    {
+      "color": "blue",
+      "count": 4
+    },
+    {
+      "color": "red",
+      "count": 8
+    },
+    {
+      "color": "green",
+      "count": 8
+    },
+    {
+      "color": "blue",
+      "count": 14
+    }
+  ],
+  "trackShape": "heart",
+  "theme": "park",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": true,
+    "jumble": true
+  },
+  "undoLimit": 4
+}

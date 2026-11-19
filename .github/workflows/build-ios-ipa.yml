@@ -1,0 +1,91 @@
+name: Build iOS IPA (Sideloadly)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-ios-ipa:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests, level validation, and web production build
+        run: |
+          npm test
+          npm run validate-levels
+          npm run build
+
+      - name: Sync Capacitor iOS project
+        run: npx cap sync ios
+
+      - name: Check Xcode & iOS SDK versions
+        run: |
+          xcodebuild -version
+          xcodebuild -showsdks
+
+      - name: Resolve Swift Package dependencies
+        run: xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+
+      - name: Build unsigned iOS Release app (.app)
+        run: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath ios/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="" \
+            build
+
+      - name: Package unsigned IPA for Sideloadly
+        run: |
+          rm -rf ipa_build BusFeverParty-Sideloadly.ipa
+          mkdir -p ipa_build/Payload
+          cp -R ios/DerivedData/Build/Products/Release-iphoneos/App.app ipa_build/Payload/App.app
+          test -f ipa_build/Payload/App.app/Info.plist
+          test -f ipa_build/Payload/App.app/App
+          test -f ipa_build/Payload/App.app/public/index.html
+          (cd ipa_build && zip -qr ../BusFeverParty-Sideloadly.ipa Payload)
+          ls -lh BusFeverParty-Sideloadly.ipa
+
+      - name: Upload IPA workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BusFeverParty-Sideloadly-IPA
+          path: BusFeverParty-Sideloadly.ipa
+          retention-days: 90
+
+      - name: Publish IPA to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="ios-latest"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" BusFeverParty-Sideloadly.ipa --clobber
+          else
+            gh release create "$TAG" BusFeverParty-Sideloadly.ipa \
+              --title "Bus Fever Party — iOS Sideloadly IPA" \
+              --notes "Unsigned iOS IPA ready to sign and install with Sideloadly (Apple ID)."
+          fi

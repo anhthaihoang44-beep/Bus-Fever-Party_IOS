@@ -1,0 +1,148 @@
+{
+  "id": 6,
+  "name": "Serpentine Stop",
+  "gridSize": {
+    "cols": 5,
+    "rows": 5
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "blue",
+      "capacity": 6,
+      "x": 1,
+      "y": 0.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "red",
+      "capacity": 8,
+      "x": 3,
+      "y": 0.5,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "green",
+      "capacity": 6,
+      "x": 0.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "yellow",
+      "capacity": 9,
+      "x": 1.5,
+      "y": 2,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "purple",
+      "capacity": 6,
+      "x": 2.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "blue",
+      "capacity": 6,
+      "x": 3.5,
+      "y": 2,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b7",
+      "color": "red",
+      "capacity": 8,
+      "x": 1,
+      "y": 3.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "green",
+      "capacity": 6,
+      "x": 3,
+      "y": 3.5,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b9",
+      "color": "yellow",
+      "capacity": 9,
+      "x": 4.5,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b10",
+      "color": "purple",
+      "capacity": 6,
+      "x": 4.5,
+      "y": 3.5,
+      "direction": "down",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [],
+  "passengerQueue": [
+    {
+      "color": "red",
+      "count": 8
+    },
+    {
+      "color": "blue",
+      "count": 6
+    },
+    {
+      "color": "purple",
+      "count": 6
+    },
+    {
+      "color": "green",
+      "count": 6
+    },
+    {
+      "color": "yellow",
+      "count": 18
+    },
+    {
+      "color": "green",
+      "count": 6
+    },
+    {
+      "color": "blue",
+      "count": 6
+    },
+    {
+      "color": "purple",
+      "count": 6
+    },
+    {
+      "color": "red",
+      "count": 8
+    }
+  ],
+  "trackShape": "snake",
+  "theme": "city",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": false,
+    "jumble": false
+  },
+  "undoLimit": 3
+}

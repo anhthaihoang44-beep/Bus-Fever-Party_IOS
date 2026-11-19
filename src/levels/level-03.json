@@ -1,0 +1,126 @@
+{
+  "id": 3,
+  "name": "Twin Lanes",
+  "gridSize": {
+    "cols": 5,
+    "rows": 5
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "blue",
+      "capacity": 6,
+      "x": 1,
+      "y": 0.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "orange",
+      "capacity": 6,
+      "x": 3,
+      "y": 0.5,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "pink",
+      "capacity": 8,
+      "x": 0.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "green",
+      "capacity": 6,
+      "x": 1.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "blue",
+      "capacity": 6,
+      "x": 2.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "orange",
+      "capacity": 6,
+      "x": 3.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b7",
+      "color": "pink",
+      "capacity": 8,
+      "x": 1,
+      "y": 3.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "green",
+      "capacity": 6,
+      "x": 3,
+      "y": 3.5,
+      "direction": "right",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [],
+  "passengerQueue": [
+    {
+      "color": "pink",
+      "count": 8
+    },
+    {
+      "color": "orange",
+      "count": 6
+    },
+    {
+      "color": "blue",
+      "count": 6
+    },
+    {
+      "color": "green",
+      "count": 6
+    },
+    {
+      "color": "pink",
+      "count": 8
+    },
+    {
+      "color": "blue",
+      "count": 6
+    },
+    {
+      "color": "green",
+      "count": 6
+    },
+    {
+      "color": "orange",
+      "count": 6
+    }
+  ],
+  "trackShape": "ring",
+  "theme": "city",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": false,
+    "arrange": false,
+    "jumble": false
+  },
+  "undoLimit": 3
+}

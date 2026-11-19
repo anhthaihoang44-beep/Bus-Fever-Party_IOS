@@ -1,0 +1,191 @@
+{
+  "id": 8,
+  "name": "Gridlock Twist",
+  "gridSize": {
+    "cols": 7,
+    "rows": 6
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "cyan",
+      "capacity": 6,
+      "x": 0.8999999999999999,
+      "y": 0.3999999999999999,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "orange",
+      "capacity": 9,
+      "x": 2.4,
+      "y": 0.8999999999999999,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "pink",
+      "capacity": 8,
+      "x": 1.9,
+      "y": 2.4,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "purple",
+      "capacity": 6,
+      "x": 0.3999999999999999,
+      "y": 1.9,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "green",
+      "capacity": 8,
+      "x": 4.7,
+      "y": 0.3999999999999999,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "blue",
+      "capacity": 9,
+      "x": 6.2,
+      "y": 0.8999999999999999,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b7",
+      "color": "cyan",
+      "capacity": 6,
+      "x": 5.7,
+      "y": 2.4,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "orange",
+      "capacity": 9,
+      "x": 4.2,
+      "y": 1.9,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b9",
+      "color": "pink",
+      "capacity": 8,
+      "x": 1,
+      "y": 4,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b10",
+      "color": "purple",
+      "capacity": 6,
+      "x": 2.5,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b11",
+      "color": "green",
+      "capacity": 8,
+      "x": 4.2,
+      "y": 4,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b12",
+      "color": "blue",
+      "capacity": 9,
+      "x": 5.8,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [],
+  "passengerQueue": [
+    {
+      "color": "blue",
+      "count": 9
+    },
+    {
+      "color": "pink",
+      "count": 8
+    },
+    {
+      "color": "cyan",
+      "count": 6
+    },
+    {
+      "color": "blue",
+      "count": 4
+    },
+    {
+      "color": "purple",
+      "count": 6
+    },
+    {
+      "color": "cyan",
+      "count": 6
+    },
+    {
+      "color": "green",
+      "count": 4
+    },
+    {
+      "color": "blue",
+      "count": 5
+    },
+    {
+      "color": "green",
+      "count": 8
+    },
+    {
+      "color": "pink",
+      "count": 4
+    },
+    {
+      "color": "green",
+      "count": 4
+    },
+    {
+      "color": "orange",
+      "count": 9
+    },
+    {
+      "color": "pink",
+      "count": 4
+    },
+    {
+      "color": "orange",
+      "count": 9
+    },
+    {
+      "color": "purple",
+      "count": 6
+    }
+  ],
+  "trackShape": "snake",
+  "theme": "city",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": true,
+    "jumble": false
+  },
+  "undoLimit": 3,
+  "tutorialHint": "Arrange Booster unlocked! Reshuffle stuck buses anytime."
+}

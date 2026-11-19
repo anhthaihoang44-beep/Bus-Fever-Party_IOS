@@ -1,0 +1,225 @@
+{
+  "id": 20,
+  "name": "Diamond Junction",
+  "gridSize": {
+    "cols": 8,
+    "rows": 8
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "red",
+      "capacity": 9,
+      "x": 4.13,
+      "y": 0.35,
+      "direction": "up-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b2",
+      "color": "brown",
+      "capacity": 6,
+      "x": 2.87,
+      "y": 1.61,
+      "direction": "up-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b3",
+      "color": "yellow",
+      "capacity": 9,
+      "x": 1.61,
+      "y": 2.87,
+      "direction": "up-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b4",
+      "color": "green",
+      "capacity": 8,
+      "x": 0.35,
+      "y": 4.13,
+      "direction": "down-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b5",
+      "color": "purple",
+      "capacity": 9,
+      "x": 5.39,
+      "y": 1.61,
+      "direction": "up-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b6",
+      "color": "orange",
+      "capacity": 8,
+      "x": 4.13,
+      "y": 2.87,
+      "direction": "up-right",
+      "type": "mystery",
+      "unlockAfter": 6,
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b7",
+      "color": "pink",
+      "capacity": 6,
+      "x": 2.87,
+      "y": 4.13,
+      "direction": "down-left",
+      "type": "mystery",
+      "unlockAfter": 7,
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b8",
+      "color": "navy",
+      "capacity": 9,
+      "x": 1.61,
+      "y": 5.39,
+      "direction": "down-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b9",
+      "color": "red",
+      "capacity": 9,
+      "x": 6.65,
+      "y": 2.87,
+      "direction": "up-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b10",
+      "color": "brown",
+      "capacity": 6,
+      "x": 5.39,
+      "y": 4.13,
+      "direction": "down-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b11",
+      "color": "yellow",
+      "capacity": 9,
+      "x": 4.13,
+      "y": 5.39,
+      "direction": "down-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b12",
+      "color": "green",
+      "capacity": 8,
+      "x": 2.87,
+      "y": 6.65,
+      "direction": "down-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "o1",
+      "x": -0.9,
+      "y": 3.5,
+      "angle": 45,
+      "width": 0.72,
+      "height": 0.72
+    },
+    {
+      "id": "o2",
+      "x": 7.9,
+      "y": 3.5,
+      "angle": 45,
+      "width": 0.72,
+      "height": 0.72
+    }
+  ],
+  "passengerQueue": [
+    {
+      "color": "red",
+      "count": 18
+    },
+    {
+      "color": "purple",
+      "count": 9
+    },
+    {
+      "color": "green",
+      "count": 12
+    },
+    {
+      "color": "yellow",
+      "count": 9
+    },
+    {
+      "color": "brown",
+      "count": 6
+    },
+    {
+      "color": "navy",
+      "count": 4
+    },
+    {
+      "color": "green",
+      "count": 4
+    },
+    {
+      "color": "yellow",
+      "count": 4
+    },
+    {
+      "color": "brown",
+      "count": 6
+    },
+    {
+      "color": "navy",
+      "count": 5
+    },
+    {
+      "color": "yellow",
+      "count": 5
+    },
+    {
+      "color": "pink",
+      "count": 6
+    },
+    {
+      "color": "orange",
+      "count": 8
+    }
+  ],
+  "trackShape": "snake",
+  "theme": "park",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": true,
+    "jumble": true
+  },
+  "undoLimit": 4
+}

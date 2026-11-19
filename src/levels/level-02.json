@@ -1,0 +1,101 @@
+{
+  "id": 2,
+  "name": "Crosswalk Rush",
+  "gridSize": {
+    "cols": 4,
+    "rows": 4
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "purple",
+      "capacity": 6,
+      "x": 1,
+      "y": 0.5,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "orange",
+      "capacity": 6,
+      "x": 2,
+      "y": 1.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "pink",
+      "capacity": 6,
+      "x": 0.5,
+      "y": 2.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "green",
+      "capacity": 6,
+      "x": 1.5,
+      "y": 2.8,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "purple",
+      "capacity": 6,
+      "x": 2.5,
+      "y": 2.8,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "orange",
+      "capacity": 6,
+      "x": 3,
+      "y": 0.5,
+      "direction": "right",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [],
+  "passengerQueue": [
+    {
+      "color": "orange",
+      "count": 6
+    },
+    {
+      "color": "purple",
+      "count": 6
+    },
+    {
+      "color": "pink",
+      "count": 6
+    },
+    {
+      "color": "orange",
+      "count": 6
+    },
+    {
+      "color": "green",
+      "count": 6
+    },
+    {
+      "color": "purple",
+      "count": 6
+    }
+  ],
+  "trackShape": "ring",
+  "theme": "city",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": false,
+    "arrange": false,
+    "jumble": false
+  },
+  "undoLimit": 3,
+  "tutorialHint": "Watch out for buses blocking the lane behind them!"
+}

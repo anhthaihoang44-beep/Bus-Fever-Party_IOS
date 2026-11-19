@@ -1,0 +1,182 @@
+{
+  "id": 7,
+  "name": "Six-Lane Plaza",
+  "gridSize": {
+    "cols": 6,
+    "rows": 5
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "red",
+      "capacity": 6,
+      "x": 1,
+      "y": 0.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "blue",
+      "capacity": 8,
+      "x": 3,
+      "y": 0.5,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "green",
+      "capacity": 9,
+      "x": 5,
+      "y": 1,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "yellow",
+      "capacity": 6,
+      "x": 0.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "pink",
+      "capacity": 8,
+      "x": 1.5,
+      "y": 2,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "purple",
+      "capacity": 6,
+      "x": 2.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b7",
+      "color": "red",
+      "capacity": 6,
+      "x": 3.5,
+      "y": 2,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "blue",
+      "capacity": 8,
+      "x": 4.8,
+      "y": 2.8,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b9",
+      "color": "green",
+      "capacity": 9,
+      "x": 1,
+      "y": 3.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b10",
+      "color": "yellow",
+      "capacity": 6,
+      "x": 3,
+      "y": 3.5,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b11",
+      "color": "pink",
+      "capacity": 8,
+      "x": 0.5,
+      "y": 4.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b12",
+      "color": "purple",
+      "capacity": 6,
+      "x": 4.5,
+      "y": 4.2,
+      "direction": "down",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [],
+  "passengerQueue": [
+    {
+      "color": "blue",
+      "count": 8
+    },
+    {
+      "color": "green",
+      "count": 9
+    },
+    {
+      "color": "purple",
+      "count": 6
+    },
+    {
+      "color": "pink",
+      "count": 12
+    },
+    {
+      "color": "red",
+      "count": 6
+    },
+    {
+      "color": "pink",
+      "count": 4
+    },
+    {
+      "color": "blue",
+      "count": 4
+    },
+    {
+      "color": "yellow",
+      "count": 6
+    },
+    {
+      "color": "green",
+      "count": 9
+    },
+    {
+      "color": "blue",
+      "count": 4
+    },
+    {
+      "color": "purple",
+      "count": 6
+    },
+    {
+      "color": "red",
+      "count": 6
+    },
+    {
+      "color": "yellow",
+      "count": 6
+    }
+  ],
+  "trackShape": "ring",
+  "theme": "city",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": false,
+    "jumble": false
+  },
+  "undoLimit": 3
+}

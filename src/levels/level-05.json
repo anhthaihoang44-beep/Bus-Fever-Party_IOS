@@ -1,0 +1,160 @@
+{
+  "id": 5,
+  "name": "Downtown Jam",
+  "gridSize": {
+    "cols": 6,
+    "rows": 6
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "yellow",
+      "capacity": 6,
+      "x": 0.8999999999999999,
+      "y": 0.3999999999999999,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "orange",
+      "capacity": 8,
+      "x": 2.4,
+      "y": 0.8999999999999999,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "pink",
+      "capacity": 6,
+      "x": 1.9,
+      "y": 2.4,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "cyan",
+      "capacity": 8,
+      "x": 0.3999999999999999,
+      "y": 1.9,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "purple",
+      "capacity": 6,
+      "x": 3.7,
+      "y": 3,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "yellow",
+      "capacity": 6,
+      "x": 5.2,
+      "y": 3.5,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b7",
+      "color": "orange",
+      "capacity": 8,
+      "x": 4.7,
+      "y": 5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "pink",
+      "capacity": 6,
+      "x": 3.2,
+      "y": 4.5,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b9",
+      "color": "cyan",
+      "capacity": 8,
+      "x": 4.8,
+      "y": 0.6,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b10",
+      "color": "purple",
+      "capacity": 6,
+      "x": 0.6,
+      "y": 4.6,
+      "direction": "down",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [],
+  "passengerQueue": [
+    {
+      "color": "yellow",
+      "count": 6
+    },
+    {
+      "color": "orange",
+      "count": 4
+    },
+    {
+      "color": "yellow",
+      "count": 6
+    },
+    {
+      "color": "cyan",
+      "count": 8
+    },
+    {
+      "color": "orange",
+      "count": 4
+    },
+    {
+      "color": "purple",
+      "count": 6
+    },
+    {
+      "color": "pink",
+      "count": 6
+    },
+    {
+      "color": "cyan",
+      "count": 8
+    },
+    {
+      "color": "orange",
+      "count": 4
+    },
+    {
+      "color": "pink",
+      "count": 6
+    },
+    {
+      "color": "purple",
+      "count": 6
+    },
+    {
+      "color": "orange",
+      "count": 4
+    }
+  ],
+  "trackShape": "heart",
+  "theme": "city",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": false,
+    "jumble": false
+  },
+  "undoLimit": 3
+}
