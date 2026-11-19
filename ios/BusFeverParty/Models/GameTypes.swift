@@ -97,6 +97,10 @@ enum ThemeId: String, Codable, CaseIterable {
     case city, park, maple
 }
 
+enum GameStatus {
+    case playing, won, lost, paused
+}
+
 enum BoosterType: String, Codable, CaseIterable, Hashable {
     case vip, arrange, jumble
 
