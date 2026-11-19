@@ -47,12 +47,12 @@ jobs:
           WIDE_DEST=$(xcrun simctl list devices available iPhone | grep -E 'Pro Max' | grep -E '\([A-F0-9-]+\)' | head -n 1 | sed -E 's/.*\(([A-F0-9-]+)\).*/\1/')
           if [ -n "$WIDE_DEST" ] && [ "$WIDE_DEST" != "$DEST" ]; then
             echo "Running second UI pass on Wide Simulator ID: $WIDE_DEST"
-            xcrun simctl boot "$WIDE_DEST" || true
-            xcrun simctl bootstatus "$WIDE_DEST" -b
+            xcrun simctl shutdown "$DEST" || true
             xcodebuild test-without-building \
               -project ios/BusFeverParty.xcodeproj \
               -scheme BusFeverParty \
               -destination "platform=iOS Simulator,id=$WIDE_DEST" \
+              -destination-timeout 120 \
               -derivedDataPath ios/DerivedDataSim \
               -only-testing:BusFeverPartyUITests
           fi

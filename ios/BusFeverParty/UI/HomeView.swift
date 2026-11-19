@@ -541,16 +541,16 @@ struct HomeView: View {
 
     private func bottomNavDock(compact: Bool) -> some View {
         HStack(spacing: 12) {
-            navButton(title: "Levels", icon: "map.fill", topColor: 0x3B8EFF, botColor: 0x1A5FC2, compact: compact) {
+            navButton(title: "Levels", kind: .levels, topColor: 0x3B8EFF, botColor: 0x1A5FC2, compact: compact) {
                 levelPage = max(0, (save.data.currentLevel - 1) / 20)
                 activeSheet = .levels
             }
             .accessibilityIdentifier("home_levels_button")
-            navButton(title: "Missions", icon: "target", topColor: 0x9B51E0, botColor: 0x6724AB, compact: compact) {
+            navButton(title: "Missions", kind: .missions, topColor: 0x9B51E0, botColor: 0x6724AB, compact: compact) {
                 activeSheet = .missions
             }
             .accessibilityIdentifier("home_missions_button")
-            navButton(title: "Leaders", icon: "trophy.fill", topColor: 0xFF8A1F, botColor: 0xC75600, compact: compact) {
+            navButton(title: "Leaders", kind: .leaders, topColor: 0xFF8A1F, botColor: 0xC75600, compact: compact) {
                 activeSheet = .leaders
             }
             .accessibilityIdentifier("home_leaders_button")
@@ -562,7 +562,7 @@ struct HomeView: View {
 
     private func navButton(
         title: String,
-        icon: String,
+        kind: HomeModalKind,
         topColor: UInt32,
         botColor: UInt32,
         compact: Bool,
@@ -582,10 +582,8 @@ struct HomeView: View {
                     .fill(Color(UIColor(hex: topColor)))
                     .frame(height: h - 2)
                     .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white, lineWidth: 2.5))
-                VStack(spacing: 2) {
-                    Image(systemName: icon)
-                        .font(.system(size: compact ? 16 : 18, weight: .bold))
-                        .foregroundColor(.white)
+                VStack(spacing: 3) {
+                    navTabIcon(kind: kind, compact: compact)
                     Text(title)
                         .font(.system(size: compact ? 12 : 13, weight: .heavy, design: .rounded))
                         .foregroundColor(.white)
@@ -594,12 +592,52 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Home Modals (Tight Auto-Fit + Scrollable Only When Needed)
+    @ViewBuilder
+    private func navTabIcon(kind: HomeModalKind, compact: Bool) -> some View {
+        let sz: CGFloat = compact ? 19 : 22
+        switch kind {
+        case .levels:
+            ZStack {
+                RoundedRectangle(cornerRadius: 3.5)
+                    .fill(Color(UIColor(hex: 0x5CC8FF)))
+                    .frame(width: sz + 3, height: sz - 3)
+                    .overlay(RoundedRectangle(cornerRadius: 3.5).stroke(Color.white, lineWidth: 1.3))
+                HStack(spacing: 2) {
+                    RoundedRectangle(cornerRadius: 2).fill(Color(UIColor(hex: 0x57D65A))).frame(width: 7, height: 10)
+                    RoundedRectangle(cornerRadius: 2).fill(Color(UIColor(hex: 0x7AE56B))).frame(width: 6, height: 8).offset(y: -1)
+                }
+            }
+            .frame(height: sz)
+        case .missions:
+            ZStack {
+                Circle().fill(Color.white).frame(width: sz, height: sz)
+                Circle().fill(Color(UIColor(hex: 0xFF3B47))).frame(width: sz * 0.72, height: sz * 0.72)
+                Circle().fill(Color.white).frame(width: sz * 0.42, height: sz * 0.42)
+                Circle().fill(Color(UIColor(hex: 0xFF3B47))).frame(width: sz * 0.18, height: sz * 0.18)
+                Image(systemName: "arrow.down.left")
+                    .font(.system(size: 10, weight: .black))
+                    .foregroundColor(Color(UIColor(hex: 0x2674E8)))
+                    .offset(x: 4, y: -4)
+            }
+            .frame(height: sz)
+        case .leaders:
+            Image(systemName: "trophy.fill")
+                .font(.system(size: sz - 3, weight: .bold))
+                .foregroundColor(Color(UIColor(hex: 0xFFE259)))
+                .shadow(color: Color(UIColor(hex: 0xB35900)), radius: 0, x: 0, y: 1.5)
+                .frame(height: sz)
+        case .settings:
+            EmptyView()
+        }
+    }
+
+    // MARK: - Home Modals (Tight Auto-Fit + Straddling Ribbon Matching Android)
 
     @ViewBuilder
     private func modalOverlay(_ kind: HomeModalKind, screenH: CGFloat, screenW: CGFloat) -> some View {
-        let maxModalH = max(280, screenH * 0.78)
+        let maxModalH = max(280, screenH * 0.76)
         let displayH = measuredModalHeight > 20 ? min(maxModalH, measuredModalHeight) : min(maxModalH, 420)
+        let accent = modalAccent(kind)
 
         ZStack {
             Color(UIColor(hex: 0x0C162B, alpha: 0.62))
@@ -609,35 +647,91 @@ struct HomeView: View {
                     activeSheet = nil
                 }
 
-            ScrollView(.vertical, showsIndicators: measuredModalHeight > maxModalH) {
-                VStack(spacing: 0) {
-                    switch kind {
-                    case .levels: levelsModalContent
-                    case .missions: missionsModalContent
-                    case .leaders: leadersModalContent
-                    case .settings: settingsModalContent
+            ZStack(alignment: .top) {
+                ScrollView(.vertical, showsIndicators: measuredModalHeight > maxModalH) {
+                    VStack(spacing: 0) {
+                        switch kind {
+                        case .levels: levelsModalContent
+                        case .missions: missionsModalContent
+                        case .leaders: leadersModalContent
+                        case .settings: settingsModalContent
+                        }
+                    }
+                    .padding(.top, 52)
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 18)
+                    .background(
+                        GeometryReader { contentGeo in
+                            Color.clear.preference(key: ModalHeightKey.self, value: contentGeo.size.height)
+                        }
+                    )
+                }
+                .id(kind)
+                .onPreferenceChange(ModalHeightKey.self) { h in
+                    if h > 80 {
+                        measuredModalHeight = h
                     }
                 }
-                .padding(18)
-                .background(
-                    GeometryReader { contentGeo in
-                        Color.clear.preference(key: ModalHeightKey.self, value: contentGeo.size.height)
-                    }
-                )
-            }
-            .id(kind)
-            .onPreferenceChange(ModalHeightKey.self) { h in
-                if h > 80 {
-                    measuredModalHeight = h
+                .frame(maxWidth: min(screenW - 36, 400))
+                .frame(height: displayH)
+                .background(Color(UIColor(hex: 0xFFF9ED)))
+                .clipShape(RoundedRectangle(cornerRadius: 26))
+                .overlay(RoundedRectangle(cornerRadius: 26).stroke(Color(UIColor(hex: accent)), lineWidth: 4))
+                .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 8)
+
+                // Straddling top ribbon pill + top-right close button matching Android v2352a_e2e_02_levels
+                HStack {
+                    Spacer()
+                    Text(modalRibbonTitle(kind))
+                        .font(.system(size: 20, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 26)
+                        .padding(.vertical, 9)
+                        .background(Color(UIColor(hex: accent)))
+                        .clipShape(Capsule())
+                        .overlay(Capsule().stroke(Color.white, lineWidth: 2.5))
+                        .shadow(color: .black.opacity(0.18), radius: 0, x: 0, y: 3)
+                    Spacer()
                 }
+                .frame(maxWidth: min(screenW - 36, 400))
+                .offset(y: -22)
+
+                HStack {
+                    Spacer()
+                    Button {
+                        SoundEngine.shared.playTap()
+                        measuredModalHeight = 0
+                        activeSheet = nil
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .black))
+                            .foregroundColor(Color(UIColor(hex: 0x5E7191)))
+                            .frame(width: 34, height: 34)
+                            .background(Color(UIColor(hex: 0xE8EFFA)))
+                            .clipShape(Circle())
+                    }
+                    .accessibilityIdentifier("modal_close_button")
+                }
+                .frame(maxWidth: min(screenW - 36, 400))
+                .padding(.top, 10)
+                .padding(.trailing, 12)
             }
-            .frame(maxWidth: min(screenW - 36, 400))
-            .frame(height: displayH)
-            .background(Color(UIColor(hex: 0xFFF9ED)))
-            .clipShape(RoundedRectangle(cornerRadius: 24))
-            .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color(UIColor(hex: modalAccent(kind))), lineWidth: 4))
-            .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 8)
             .padding(.horizontal, 18)
+        }
+    }
+
+    private func modalRibbonTitle(_ kind: HomeModalKind) -> String {
+        switch kind {
+        case .levels:
+            let startId = levelPage * 20 + 1
+            let endId = startId + 19
+            return startId > 25 ? "Endless \(startId)–\(endId)" : "Levels \(startId)–\(endId)"
+        case .missions:
+            return "Missions"
+        case .leaders:
+            return "Leaderboard"
+        case .settings:
+            return "Settings"
         }
     }
 
@@ -650,42 +744,12 @@ struct HomeView: View {
         }
     }
 
-    private func modalHeader(title: String, accent: UInt32) -> some View {
-        HStack {
-            Text(title)
-                .font(.system(size: 18, weight: .black, design: .rounded))
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color(UIColor(hex: accent)))
-                .clipShape(Capsule())
-            Spacer()
-            Button {
-                SoundEngine.shared.playTap()
-                measuredModalHeight = 0
-                activeSheet = nil
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(Color(UIColor(hex: 0x6E7E99)))
-                    .frame(width: 38, height: 38)
-                    .background(Color(UIColor(hex: 0xE8EFFA)))
-                    .clipShape(Circle())
-            }
-            .accessibilityIdentifier("modal_close_button")
-        }
-        .padding(.bottom, 12)
-    }
-
     private var levelsModalContent: some View {
         let startId = levelPage * 20 + 1
         let endId = startId + 19
-        let title = startId > 25 ? "Endless (\(startId)–\(endId))" : "Levels \(startId)–\(endId)"
         let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 5)
 
-        return VStack(spacing: 12) {
-            modalHeader(title: title, accent: 0x3B8EFF)
-
+        return VStack(spacing: 14) {
             LazyVGrid(columns: columns, spacing: 9) {
                 ForEach(startId...endId, id: \.self) { lv in
                     let unlocked = lv <= save.data.highestUnlockedLevel
@@ -704,7 +768,7 @@ struct HomeView: View {
                             } else {
                                 Image(systemName: "lock.fill")
                                     .font(.system(size: 14, weight: .bold))
-                                    .foregroundColor(.white.opacity(0.92))
+                                    .foregroundColor(Color(UIColor(hex: 0xFFC814)))
                             }
                             Text(unlocked ? (stars > 0 ? String(repeating: "★", count: stars) : (lv > 25 ? "∞" : "")) : "Lv.\(lv)")
                                 .font(.system(size: 10, weight: .bold, design: .rounded))
@@ -723,19 +787,23 @@ struct HomeView: View {
                 }
             }
 
-            HStack(spacing: 14) {
+            HStack(spacing: 24) {
                 Button {
                     guard levelPage > 0 else { return }
                     SoundEngine.shared.playTap()
                     levelPage -= 1
                 } label: {
-                    Text("◀ Prev")
-                        .font(.system(size: 14, weight: .heavy, design: .rounded))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(Color(UIColor(hex: levelPage > 0 ? 0x3B8EFF : 0x9AA8BF)))
-                        .clipShape(Capsule())
+                    ZStack {
+                        Capsule().fill(Color(UIColor(hex: levelPage > 0 ? 0x1A5FC2 : 0x7A889E))).offset(y: 3)
+                        Text("◀ Prev")
+                            .font(.system(size: 14, weight: .heavy, design: .rounded))
+                            .foregroundColor(.white)
+                            .frame(width: 118, height: 36)
+                            .background(Color(UIColor(hex: levelPage > 0 ? 0x3B8EFF : 0x9AA8BF)))
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color.white, lineWidth: 2))
+                    }
+                    .fixedSize()
                 }
                 .disabled(levelPage <= 0)
 
@@ -743,22 +811,25 @@ struct HomeView: View {
                     SoundEngine.shared.playTap()
                     levelPage += 1
                 } label: {
-                    Text("Next ▶")
-                        .font(.system(size: 14, weight: .heavy, design: .rounded))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(Color(UIColor(hex: 0x3B8EFF)))
-                        .clipShape(Capsule())
+                    ZStack {
+                        Capsule().fill(Color(UIColor(hex: 0x1A5FC2))).offset(y: 3)
+                        Text("Next ▶")
+                            .font(.system(size: 14, weight: .heavy, design: .rounded))
+                            .foregroundColor(.white)
+                            .frame(width: 118, height: 36)
+                            .background(Color(UIColor(hex: 0x3B8EFF)))
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color.white, lineWidth: 2))
+                    }
+                    .fixedSize()
                 }
             }
-            .padding(.top, 2)
+            .padding(.top, 4)
         }
     }
 
     private var missionsModalContent: some View {
         VStack(spacing: 10) {
-            modalHeader(title: "Daily & Weekly Missions", accent: 0x9B51E0)
             ForEach(save.data.missions) { m in
                 let done = m.progress >= m.target
                 HStack {
@@ -818,7 +889,6 @@ struct HomeView: View {
         ).sorted { $0.score > $1.score }
 
         return VStack(spacing: 8) {
-            modalHeader(title: "Party Leaderboard", accent: 0xFF8A1F)
             ForEach(Array(allRows.enumerated()), id: \.offset) { idx, r in
                 let rankText = idx == 0 ? "🥇" : (idx == 1 ? "🥈" : (idx == 2 ? "🥉" : "#\(idx + 1)"))
                 HStack(spacing: 10) {
@@ -850,8 +920,6 @@ struct HomeView: View {
 
     private var settingsModalContent: some View {
         VStack(spacing: 14) {
-            modalHeader(title: "Settings", accent: 0x3B8EFF)
-
             HStack {
                 Text("🔊 Sound Effects")
                     .font(.system(size: 16, weight: .bold, design: .rounded))

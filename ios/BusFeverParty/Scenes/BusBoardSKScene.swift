@@ -423,13 +423,26 @@ final class BusBoardSKScene: SKScene {
             node.removeAllChildren()
 
             if slot.kind == .vip {
-                let box = SKShapeNode(rectOf: CGSize(width: w, height: h), cornerRadius: 9)
-                box.fillColor = slot.unlocked ? UIColor(hex: 0x3B4760, alpha: 0.88) : UIColor(hex: 0x454C5E, alpha: 0.88)
-                box.strokeColor = slot.unlocked ? UIColor(hex: 0xFFDF6B) : UIColor(hex: 0xFFBE2E)
-                box.lineWidth = 2.5
-                box.zRotation = rad
-                box.zPosition = 0
-                node.addChild(box)
+                let rawPath = UIBezierPath(
+                    roundedRect: CGRect(x: -w * 0.5, y: -h * 0.5, width: w, height: h),
+                    cornerRadius: 9
+                ).cgPath
+
+                let fillBox = SKShapeNode(path: rawPath)
+                fillBox.fillColor = slot.unlocked ? UIColor(hex: 0x3B4760, alpha: 0.88) : UIColor(hex: 0x454C5E, alpha: 0.88)
+                fillBox.strokeColor = .clear
+                fillBox.zRotation = rad
+                fillBox.zPosition = 0
+                node.addChild(fillBox)
+
+                let dashedPath = rawPath.copy(dashingWithPhase: 0, lengths: [7, 5])
+                let borderBox = SKShapeNode(path: dashedPath)
+                borderBox.fillColor = .clear
+                borderBox.strokeColor = slot.unlocked ? UIColor(hex: 0xFFDF6B) : UIColor(hex: 0xFFBE2E)
+                borderBox.lineWidth = 2.5
+                borderBox.zRotation = rad
+                borderBox.zPosition = 0.5
+                node.addChild(borderBox)
 
                 let lbl = SKLabelNode(text: "VIP")
                 lbl.fontName = "AvenirNext-Bold"

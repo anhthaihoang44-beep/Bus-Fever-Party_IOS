@@ -168,87 +168,100 @@ struct GameContainerView: View {
     var body: some View {
         let skScene = coordinator.makeScene()
 
-        ZStack {
-            SpriteKitBoardRepresentable(scene: skScene)
-                .ignoresSafeArea()
+        GeometryReader { geo in
+            ZStack {
+                SpriteKitBoardRepresentable(scene: skScene)
+                    .ignoresSafeArea()
 
-            VStack {
-                // Header Bar
-                HStack(spacing: 10) {
-                    Button {
-                        coordinator.scene?.handleUndo()
-                    } label: {
-                        ZStack(alignment: .topTrailing) {
-                            Image(systemName: "arrow.uturn.backward")
-                                .font(.system(size: 18, weight: .bold))
+                VStack {
+                    // Header Bar
+                    HStack(spacing: 10) {
+                        Button {
+                            coordinator.scene?.handleUndo()
+                        } label: {
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: "arrow.uturn.backward")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                                    .background(Color(UIColor(hex: 0x3B8EFF)))
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
+                                    .shadow(color: Color(UIColor(hex: 0x1D5EC2)), radius: 0, x: 0, y: 2.5)
+
+                                Text("\(coordinator.undoRemaining)")
+                                    .font(.system(size: 11, weight: .black, design: .rounded))
+                                    .foregroundColor(.white)
+                                    .frame(width: 20, height: 20)
+                                    .background(Color(UIColor(hex: coordinator.undoRemaining > 0 ? 0xF53B45 : 0x7B889E)))
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white, lineWidth: 1.5))
+                                    .offset(x: 4, y: -4)
+                            }
+                        }
+                        .opacity(coordinator.canUndo ? 1.0 : 0.62)
+                        .accessibilityIdentifier("game_undo_button")
+
+                        Button {
+                            SoundEngine.shared.playTap()
+                            coordinator.restart(with: coordinator.level)
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 40, height: 40)
+                                .background(Color(UIColor(hex: 0x4CA6FF)))
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
+                                .shadow(color: Color(UIColor(hex: 0x1D5EC2)), radius: 0, x: 0, y: 2.5)
+                        }
+                        .accessibilityIdentifier("game_restart_button")
+
+                        Spacer()
+
+                        VStack(spacing: 1) {
+                            let titleStr = coordinator.level.isEvent == true
+                                ? (coordinator.level.eventName ?? "Maple Event")
+                                : "Level \(coordinator.level.id)"
+                            let titleFont = Font.system(size: coordinator.level.isEvent == true ? 18 : 24, weight: .black, design: .rounded)
+                            let outlineColor = Color(UIColor(hex: 0x2C4166))
+                            ZStack {
+                                Text(titleStr).font(titleFont).foregroundColor(outlineColor).offset(x: -1.5, y: -1.5)
+                                Text(titleStr).font(titleFont).foregroundColor(outlineColor).offset(x: 1.5, y: -1.5)
+                                Text(titleStr).font(titleFont).foregroundColor(outlineColor).offset(x: -1.5, y: 1.5)
+                                Text(titleStr).font(titleFont).foregroundColor(outlineColor).offset(x: 1.5, y: 1.5)
+                                Text(titleStr).font(titleFont).foregroundColor(.white)
+                            }
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+
+                            if coordinator.level.isEvent != true && coordinator.level.id > 25 {
+                                Text("∞ Endless Mode")
+                                    .font(.system(size: 11.5, weight: .heavy, design: .rounded))
+                                    .foregroundColor(Color(UIColor(hex: 0x2E5EA8)))
+                            }
+                        }
+
+                        Spacer()
+
+                        Button {
+                            SoundEngine.shared.playTap()
+                            coordinator.scene?.setPausedByModal(true)
+                            coordinator.showPauseModal = true
+                        } label: {
+                            Image(systemName: "pause.fill")
+                                .font(.system(size: 17, weight: .bold))
                                 .foregroundColor(.white)
                                 .frame(width: 44, height: 44)
                                 .background(Color(UIColor(hex: 0x3B8EFF)))
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
-
-                            Text("\(coordinator.undoRemaining)")
-                                .font(.system(size: 11, weight: .black, design: .rounded))
-                                .foregroundColor(.white)
-                                .frame(width: 20, height: 20)
-                                .background(Color(UIColor(hex: coordinator.undoRemaining > 0 ? 0xF53B45 : 0x7B889E)))
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.white, lineWidth: 1.5))
-                                .offset(x: 4, y: -4)
+                                .shadow(color: Color(UIColor(hex: 0x1D5EC2)), radius: 0, x: 0, y: 2.5)
                         }
+                        .accessibilityIdentifier("game_pause_button")
                     }
-                    .opacity(coordinator.canUndo ? 1.0 : 0.62)
-                    .accessibilityIdentifier("game_undo_button")
-
-                    Button {
-                        SoundEngine.shared.playTap()
-                        coordinator.restart(with: coordinator.level)
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 17, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 40, height: 40)
-                            .background(Color(UIColor(hex: 0x4CA6FF)))
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
-                    }
-                    .accessibilityIdentifier("game_restart_button")
-
-                    Spacer()
-
-                    VStack(spacing: 1) {
-                        Text(coordinator.level.isEvent == true ? (coordinator.level.eventName ?? "Maple Event") : "Level \(coordinator.level.id)")
-                            .font(.system(size: coordinator.level.isEvent == true ? 18 : 24, weight: .black, design: .rounded))
-                            .foregroundColor(.white)
-                            .shadow(color: Color(UIColor(hex: 0x2C4166)), radius: 0, x: 0, y: 2)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
-                        if coordinator.level.isEvent != true && coordinator.level.id > 25 {
-                            Text("∞ Endless Mode")
-                                .font(.system(size: 11.5, weight: .heavy, design: .rounded))
-                                .foregroundColor(Color(UIColor(hex: 0x2E5EA8)))
-                        }
-                    }
-
-                    Spacer()
-
-                    Button {
-                        SoundEngine.shared.playTap()
-                        coordinator.scene?.setPausedByModal(true)
-                        coordinator.showPauseModal = true
-                    } label: {
-                        Image(systemName: "pause.fill")
-                            .font(.system(size: 17, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 44, height: 44)
-                            .background(Color(UIColor(hex: 0x3B8EFF)))
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
-                    }
-                    .accessibilityIdentifier("game_pause_button")
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 4)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 4)
 
                 if let toast = coordinator.toastMessage {
                     Text(toast)
@@ -291,6 +304,7 @@ struct GameContainerView: View {
                 .padding(.horizontal, 14)
                 .padding(.bottom, 6)
             }
+            .frame(width: geo.size.width, height: geo.size.height)
 
             // Modals
             if let win = coordinator.winResult {
@@ -305,6 +319,7 @@ struct GameContainerView: View {
                 unlockSlotModal(slotIdx)
             }
         }
+        }
     }
 
     private func boosterButton(_ type: BoosterType, icon: String, label: String) -> some View {
@@ -314,18 +329,53 @@ struct GameContainerView: View {
             coordinator.scene?.handleBooster(type)
         } label: {
             ZStack(alignment: .topTrailing) {
-                VStack(spacing: 2) {
-                    Text(unlocked ? icon : "🔒")
-                        .font(.system(size: 20))
-                    Text(unlocked ? label : "Level \(type.unlockLevel)")
-                        .font(.system(size: 13, weight: .heavy, design: .rounded))
-                        .foregroundColor(.white)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(UIColor(hex: 0x2F5E9E)))
+                        .frame(height: 60)
+                        .offset(y: 3)
+
+                    VStack(spacing: 3) {
+                        if !unlocked {
+                            ZStack {
+                                Image(systemName: "lock.fill")
+                                    .font(.system(size: 19, weight: .bold))
+                                    .foregroundColor(Color(UIColor(hex: 0x7A4B00)))
+                                    .offset(y: 1)
+                                Image(systemName: "lock.fill")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(Color(UIColor(hex: 0xFFC814)))
+                            }
+                        } else if type == .vip {
+                            HStack(spacing: 3) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color(UIColor(hex: 0xFFA726)))
+                                    .frame(width: 24, height: 15)
+                                    .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.white, lineWidth: 1.5))
+                                Circle()
+                                    .fill(Color(UIColor(hex: 0xFFE047)))
+                                    .frame(width: 9, height: 9)
+                            }
+                            .frame(height: 22)
+                        } else {
+                            Text(icon)
+                                .font(.system(size: 19))
+                        }
+
+                        let textStr = unlocked ? label : "Level \(type.unlockLevel)"
+                        let textFont = Font.system(size: 12.5, weight: .heavy, design: .rounded)
+                        ZStack {
+                            Text(textStr).font(textFont).foregroundColor(Color(UIColor(hex: 0x243B61))).offset(x: -0.9, y: 0.9)
+                            Text(textStr).font(textFont).foregroundColor(Color(UIColor(hex: 0x243B61))).offset(x: 0.9, y: 0.9)
+                            Text(textStr).font(textFont).foregroundColor(.white)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 58)
+                    .background(Color(UIColor(hex: unlocked ? 0x5AAEFF : 0x6296D9)))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white, lineWidth: 2))
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 62)
-                .background(Color(UIColor(hex: unlocked ? 0x5AAEFF : 0x6296D9)))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white, lineWidth: 2.5))
 
                 if unlocked {
                     Text(count > 0 ? "\(count)" : "+")
@@ -335,7 +385,7 @@ struct GameContainerView: View {
                         .background(Color(UIColor(hex: count > 0 ? 0xF53B45 : 0x34D349)))
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                        .offset(x: 4, y: -6)
+                        .offset(x: 4, y: -5)
                 }
             }
         }
