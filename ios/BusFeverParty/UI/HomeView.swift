@@ -1,5 +1,66 @@
 import SwiftUI
 
+private struct HomeSafeMetrics: Equatable {
+    var top: CGFloat = 0
+    var bottom: CGFloat = 0
+    var usableHeight: CGFloat = 750
+}
+
+private struct HomeSafeMetricsKey: PreferenceKey {
+    static var defaultValue = HomeSafeMetrics()
+    static func reduce(value: inout HomeSafeMetrics, nextValue: () -> HomeSafeMetrics) {
+        value = nextValue()
+    }
+}
+
+private struct ModalHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
+private struct StrokedText: View {
+    let text: String
+    let font: Font
+    let fillColor: Color
+    let strokeColor: Color
+    let strokeWidth: CGFloat
+
+    var body: some View {
+        ZStack {
+            Text(text).font(font).foregroundColor(strokeColor).offset(x: -strokeWidth, y: -strokeWidth)
+            Text(text).font(font).foregroundColor(strokeColor).offset(x: strokeWidth, y: -strokeWidth)
+            Text(text).font(font).foregroundColor(strokeColor).offset(x: -strokeWidth, y: strokeWidth)
+            Text(text).font(font).foregroundColor(strokeColor).offset(x: strokeWidth, y: strokeWidth)
+            Text(text).font(font).foregroundColor(strokeColor).offset(x: 0, y: strokeWidth * 1.3)
+            Text(text).font(font).foregroundColor(fillColor)
+        }
+    }
+}
+
+private struct GoldCoinBadge: View {
+    var size: CGFloat = 22
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color(UIColor(hex: 0xFFE869)), Color(UIColor(hex: 0xFFA800))],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: size, height: size)
+                .overlay(Circle().stroke(Color(UIColor(hex: 0xD97706)), lineWidth: 1.5))
+            Circle()
+                .stroke(Color(UIColor(hex: 0xFFF7C2)), lineWidth: 1.2)
+                .frame(width: size * 0.66, height: size * 0.66)
+        }
+    }
+}
+
 struct HomeView: View {
     @ObservedObject private var save = SaveManager.shared
     let onPlayLevel: (Int, Bool) -> Void
@@ -8,7 +69,10 @@ struct HomeView: View {
     @State private var levelPage: Int = 0
     @State private var floatLogo = false
     @State private var pulsePlay = false
-    @State private var busRollOffset: CGFloat = -220
+    @State private var cloudDrift = false
+    @State private var busRollOffset: CGFloat = -320
+    @State private var measuredModalHeight: CGFloat = 0
+    @State private var safeMetrics = HomeSafeMetrics()
 
     enum HomeModalKind: Identifiable {
         case levels, missions, leaders, settings
@@ -28,144 +92,88 @@ struct HomeView: View {
 
     var body: some View {
         let targetLevel = save.data.currentLevel
-        let screenW = UIScreen.main.bounds.width
+        let compact = safeMetrics.usableHeight < 700
+        let roadBandH: CGFloat = compact ? 30 : 34
+        let dockBodyH: CGFloat = compact ? 74 : 84
 
         ZStack {
-            // Full-bleed sky & road background
-            VStack(spacing: 0) {
-                Color(UIColor(hex: 0x62B6FF))
-                Color(UIColor(hex: 0xA6D8FF))
+            // Layer 1: Full-bleed sky, clouds, hills, road & dock matching full screen edge-to-edge
+            GeometryReader { bgGeo in
+                let w = bgGeo.size.width
+                let h = bgGeo.size.height
+                fullScreenBackdrop(
+                    width: w,
+                    fullHeight: h,
+                    safeTop: safeMetrics.top,
+                    dockHeight: dockBodyH + safeMetrics.bottom,
+                    roadBandH: roadBandH
+                )
             }
             .ignoresSafeArea()
 
-            VStack {
-                HStack {
-                    cloudCluster
-                        .offset(x: -16, y: 80)
-                    Spacer()
-                    cloudCluster
-                        .offset(x: 16, y: 120)
+            // Layer 2: Safe-area interactive HUD & Cards
+            GeometryReader { fgGeo in
+                let w = fgGeo.size.width
+                let h = fgGeo.size.height
+                let isCompact = h < 700
+                let roadH: CGFloat = isCompact ? 30 : 34
+
+                VStack(spacing: isCompact ? 8 : 12) {
+                    topBar(compact: isCompact)
+
+                    heroLogoBadge(width: w, compact: isCompact)
+
+                    seasonalCard(compact: isCompact)
+
+                    Spacer(minLength: 8)
+
+                    VStack(spacing: isCompact ? 12 : 16) {
+                        milestoneCard(targetLevel: targetLevel, compact: isCompact)
+                        playCTAButton(targetLevel: targetLevel, compact: isCompact)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    // Keep middle cluster cleanly above the rolling buses and road curb
+                    Color.clear
+                        .frame(height: roadH + (isCompact ? 12 : 18))
+
+                    bottomNavDock(compact: isCompact)
                 }
-                Spacer()
-                scenicRoadBackdrop(width: screenW)
+                .frame(width: w, height: h)
+                .background(
+                    Color.clear.preference(
+                        key: HomeSafeMetricsKey.self,
+                        value: HomeSafeMetrics(
+                            top: fgGeo.safeAreaInsets.top,
+                            bottom: fgGeo.safeAreaInsets.bottom,
+                            usableHeight: h
+                        )
+                    )
+                )
+                .onAppear {
+                    let span = w * 0.5 + 280
+                    busRollOffset = -span
+                    withAnimation(.linear(duration: 6.8).repeatForever(autoreverses: false)) {
+                        busRollOffset = span
+                    }
+                }
             }
-            .ignoresSafeArea()
-
-            // Safe-area-respecting interactive foreground
-            VStack(spacing: 12) {
-                // Top Bar: Coins + Settings
-                HStack {
-                    HStack(spacing: 7) {
-                        Text("🪙")
-                        Text("\(save.data.coins)")
-                            .font(.system(size: 17, weight: .heavy, design: .rounded))
-                            .foregroundColor(Color(UIColor(hex: 0x5C3A00)))
-                    }
-                    .padding(.horizontal, 15)
-                    .padding(.vertical, 8)
-                    .background(Color.white.opacity(0.95))
-                    .clipShape(Capsule())
-                    .overlay(Capsule().stroke(Color(UIColor(hex: 0xFFC814)), lineWidth: 2.5))
-
-                    Spacer()
-
-                    Button {
-                        SoundEngine.shared.playTap()
-                        activeSheet = .settings
-                    } label: {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 42, height: 42)
-                            .background(Color(UIColor(hex: 0x3B8EFF)))
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
-                    }
-                    .accessibilityIdentifier("home_settings_button")
+            .onPreferenceChange(HomeSafeMetricsKey.self) { metrics in
+                if metrics != safeMetrics {
+                    safeMetrics = metrics
                 }
-                .padding(.horizontal, 18)
-                .padding(.top, 6)
-
-                // Title Logo Badge
-                ZStack {
-                    RoundedRectangle(cornerRadius: 22)
-                        .fill(Color(UIColor(hex: 0x1E4FA8)))
-                        .frame(maxWidth: 300)
-                        .frame(height: 92)
-                        .offset(y: 5)
-                    RoundedRectangle(cornerRadius: 22)
-                        .fill(Color(UIColor(hex: 0x388EFF)))
-                        .frame(maxWidth: 300)
-                        .frame(height: 90)
-                        .overlay(RoundedRectangle(cornerRadius: 22).stroke(Color.white, lineWidth: 3.5))
-
-                    VStack(spacing: 3) {
-                        Text("BUS FEVER")
-                            .font(.system(size: 34, weight: .black, design: .rounded))
-                            .foregroundColor(Color(UIColor(hex: 0xFFE047)))
-                            .shadow(color: Color(UIColor(hex: 0x163570)), radius: 0, x: 0, y: 2.5)
-                        Text("PARTY PASSENGER LOOP")
-                            .font(.system(size: 14, weight: .heavy, design: .rounded))
-                            .foregroundColor(.white)
-                    }
-                }
-                .offset(y: floatLogo ? -4 : 0)
-
-                // Seasonal Event Banner
-                seasonalCard
-
-                Spacer(minLength: 6)
-
-                // Milestone / Endless Roadmap Card
-                milestoneCard(targetLevel: targetLevel)
-
-                // Primary PLAY CTA
-                Button {
-                    SoundEngine.shared.playTap()
-                    onPlayLevel(targetLevel, false)
-                } label: {
-                    ZStack {
-                        Capsule()
-                            .fill(Color(UIColor(hex: 0x158C24)))
-                            .frame(width: 268, height: 64)
-                            .offset(y: 4)
-                        Capsule()
-                            .fill(Color(UIColor(hex: 0x34D349)))
-                            .frame(width: 268, height: 62)
-                            .overlay(Capsule().stroke(Color.white, lineWidth: 3))
-                        Text("PLAY  LEVEL \(targetLevel)")
-                            .font(.system(size: 21, weight: .black, design: .rounded))
-                            .foregroundColor(.white)
-                    }
-                }
-                .scaleEffect(pulsePlay ? 1.03 : 1.0)
-                .padding(.top, 2)
-                .accessibilityIdentifier("home_play_button")
-
-                Spacer(minLength: 42)
-
-                // Bottom 3-tab Nav
-                HStack(spacing: 12) {
-                    navButton(title: "Levels", icon: "🗺️", topColor: 0x3B8EFF, botColor: 0x1A5FC2) {
-                        levelPage = max(0, (save.data.currentLevel - 1) / 20)
-                        activeSheet = .levels
-                    }
-                    .accessibilityIdentifier("home_levels_button")
-                    navButton(title: "Missions", icon: "🎯", topColor: 0x9B51E0, botColor: 0x6724AB) {
-                        activeSheet = .missions
-                    }
-                    .accessibilityIdentifier("home_missions_button")
-                    navButton(title: "Leaders", icon: "🏆", topColor: 0xFF8A1F, botColor: 0xC75600) {
-                        activeSheet = .leaders
-                    }
-                    .accessibilityIdentifier("home_leaders_button")
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
             }
 
             if let modal = activeSheet {
-                modalOverlay(modal)
+                GeometryReader { modalGeo in
+                    modalOverlay(
+                        modal,
+                        screenH: modalGeo.size.height + modalGeo.safeAreaInsets.top + modalGeo.safeAreaInsets.bottom,
+                        screenW: modalGeo.size.width
+                    )
+                }
+                .ignoresSafeArea()
             }
         }
         .onAppear {
@@ -175,67 +183,259 @@ struct HomeView: View {
             withAnimation(.easeInOut(duration: 0.95).repeatForever(autoreverses: true)) {
                 pulsePlay = true
             }
-            let span = screenW * 0.5 + 260
-            busRollOffset = -span
-            withAnimation(.linear(duration: 7.5).repeatForever(autoreverses: false)) {
-                busRollOffset = span
+            withAnimation(.easeInOut(duration: 4.2).repeatForever(autoreverses: true)) {
+                cloudDrift = true
             }
         }
     }
 
-    private var cloudCluster: some View {
+    // MARK: - Backdrop
+
+    private func fullScreenBackdrop(
+        width: CGFloat,
+        fullHeight: CGFloat,
+        safeTop: CGFloat,
+        dockHeight: CGFloat,
+        roadBandH: CGFloat
+    ) -> some View {
+        let topSkyH = round(fullHeight * 0.52)
+
+        return ZStack(alignment: .top) {
+            // 52/48 sky gradient bands
+            VStack(spacing: 0) {
+                Color(UIColor(hex: 0x69B8FF))
+                    .frame(height: topSkyH)
+                Color(UIColor(hex: 0x9BD4FF))
+            }
+            .frame(width: width, height: fullHeight)
+
+            // Subtle drifting clouds placed cleanly below safe area top
+            cloudCluster(scale: 1.0)
+                .position(x: width * 0.16 + (cloudDrift ? 12 : -6), y: safeTop + 92)
+            cloudCluster(scale: 0.72)
+                .position(x: width * 0.52 + (cloudDrift ? -10 : 8), y: safeTop + 56)
+            cloudCluster(scale: 0.86)
+                .position(x: width * 0.85 + (cloudDrift ? 8 : -10), y: safeTop + 114)
+
+            // Bottom hills, curb, asphalt, rolling buses, dark slate dock
+            VStack(spacing: 0) {
+                Spacer(minLength: 0)
+
+                ZStack(alignment: .bottom) {
+                    // Two rolling green hills behind road
+                    HStack(spacing: -width * 0.24) {
+                        Ellipse()
+                            .fill(Color(UIColor(hex: 0x7EDB65)))
+                            .frame(width: width * 0.78, height: 110)
+                        Ellipse()
+                            .fill(Color(UIColor(hex: 0x63C94B)))
+                            .frame(width: width * 0.76, height: 98)
+                    }
+                    .frame(width: width)
+                    .clipped()
+                    .offset(y: -(dockHeight + roadBandH - 36))
+
+                    // Roadway stack anchored to screen bottom
+                    VStack(spacing: 0) {
+                        Rectangle()
+                            .fill(Color(UIColor(hex: 0x9AA6BF)))
+                            .frame(width: width, height: 5)
+
+                        Rectangle()
+                            .fill(Color(UIColor(hex: 0x525C70)))
+                            .frame(width: width, height: roadBandH)
+
+                        Rectangle()
+                            .fill(Color(UIColor(hex: 0x3F4759)))
+                            .frame(width: width, height: dockHeight)
+                    }
+
+                    // Rolling buses riding right along the asphalt strip above dock
+                    ZStack {
+                        HStack(spacing: 48) {
+                            ForEach([BusColor.pink, .yellow, .blue, .green], id: \.self) { color in
+                                Image(uiImage: VectorTextures.shared.busUIImage(for: color))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 62, height: 36)
+                            }
+                        }
+                        .offset(x: busRollOffset)
+                    }
+                    .frame(width: width, height: roadBandH + 18)
+                    .clipped()
+                    .offset(y: -(dockHeight + 6))
+                }
+                .frame(width: width)
+            }
+            .frame(width: width, height: fullHeight)
+        }
+    }
+
+    private func cloudCluster(scale: CGFloat) -> some View {
         ZStack {
-            Circle().fill(Color.white.opacity(0.6)).frame(width: 56, height: 56)
-            Circle().fill(Color.white.opacity(0.6)).frame(width: 42, height: 42).offset(x: 26, y: 6)
-            Circle().fill(Color.white.opacity(0.6)).frame(width: 38, height: 38).offset(x: -22, y: 8)
+            Circle().fill(Color.white.opacity(0.65)).frame(width: 44 * scale, height: 44 * scale).offset(x: -16 * scale, y: 4 * scale)
+            Circle().fill(Color.white.opacity(0.65)).frame(width: 54 * scale, height: 54 * scale).offset(x: 4 * scale, y: -4 * scale)
+            Circle().fill(Color.white.opacity(0.65)).frame(width: 38 * scale, height: 38 * scale).offset(x: 24 * scale, y: 5 * scale)
         }
     }
 
-    private var seasonalCard: some View {
-        HStack(spacing: 10) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(save.data.stats.eventCompleted ? "🍁 SEASONAL EVENT • CLEARED ✓" : "🍁 SEASONAL EVENT")
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .foregroundColor(Color(UIColor(hex: 0xFFF2BD)))
-                Text("Maple Bus Escape Challenge")
-                    .font(.system(size: 17, weight: .black, design: .rounded))
-                    .foregroundColor(.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.78)
-                Text("Autumn maple loop • Bonus coins!")
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    .foregroundColor(Color(UIColor(hex: 0xFFEBD1)))
+    // MARK: - Foreground Sections
+
+    private func topBar(compact: Bool) -> some View {
+        HStack {
+            HStack(spacing: 8) {
+                GoldCoinBadge(size: compact ? 20 : 22)
+                Text("\(save.data.coins)")
+                    .font(.system(size: compact ? 16 : 17, weight: .black, design: .rounded))
+                    .foregroundColor(Color(UIColor(hex: 0x6E4500)))
             }
-            Spacer(minLength: 6)
+            .padding(.horizontal, 14)
+            .padding(.vertical, compact ? 7 : 8)
+            .background(Color.white.opacity(0.96))
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(Color(UIColor(hex: 0xFFC814)), lineWidth: 2.5))
+            .shadow(color: Color(UIColor(hex: 0x1F355C)).opacity(0.22), radius: 0, x: 0, y: 3)
+
+            Spacer()
+
             Button {
                 SoundEngine.shared.playTap()
-                onPlayLevel(101, true)
+                activeSheet = .settings
             } label: {
-                Text("Play Event")
-                    .font(.system(size: 13.5, weight: .heavy, design: .rounded))
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: compact ? 16 : 18, weight: .bold))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 13)
-                    .padding(.vertical, 9)
-                    .background(Color(UIColor(hex: 0x34D349)))
-                    .clipShape(Capsule())
-                    .overlay(Capsule().stroke(Color.white, lineWidth: 2))
+                    .frame(width: compact ? 38 : 42, height: compact ? 38 : 42)
+                    .background(Color(UIColor(hex: 0x3B8EFF)))
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
+                    .shadow(color: Color(UIColor(hex: 0x1A5FC2)), radius: 0, x: 0, y: 2.5)
+            }
+            .accessibilityIdentifier("home_settings_button")
+        }
+        .padding(.horizontal, 18)
+        .padding(.top, compact ? 2 : 6)
+    }
+
+    private func heroLogoBadge(width: CGFloat, compact: Bool) -> some View {
+        let badgeW = min(max(220, width - 96), 286)
+        let badgeH: CGFloat = compact ? 76 : 88
+
+        return ZStack {
+            // Left orange bus peeking behind badge
+            Image(uiImage: VectorTextures.shared.busUIImage(for: .orange))
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 56, height: 32)
+                .rotationEffect(.degrees(-18))
+                .offset(x: -(badgeW * 0.5 + 8), y: 12)
+
+            // Right cyan bus peeking & flipped behind badge
+            Image(uiImage: VectorTextures.shared.busUIImage(for: .cyan))
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 56, height: 32)
+                .scaleEffect(x: -1, y: 1)
+                .rotationEffect(.degrees(18))
+                .offset(x: badgeW * 0.5 + 8, y: 12)
+
+            RoundedRectangle(cornerRadius: 22)
+                .fill(Color(UIColor(hex: 0x163570)).opacity(0.42))
+                .frame(width: badgeW, height: badgeH)
+                .offset(y: 6)
+
+            RoundedRectangle(cornerRadius: 22)
+                .fill(Color(UIColor(hex: 0x2E86FF)))
+                .frame(width: badgeW, height: badgeH)
+                .overlay(RoundedRectangle(cornerRadius: 22).stroke(Color.white, lineWidth: 3.5))
+
+            VStack(spacing: compact ? 1 : 3) {
+                StrokedText(
+                    text: "BUS FEVER",
+                    font: .system(size: compact ? 28 : 33, weight: .black, design: .rounded),
+                    fillColor: Color(UIColor(hex: 0xFFE047)),
+                    strokeColor: Color(UIColor(hex: 0x163570)),
+                    strokeWidth: 1.8
+                )
+                StrokedText(
+                    text: "PARTY PASSENGER LOOP",
+                    font: .system(size: compact ? 12 : 14, weight: .heavy, design: .rounded),
+                    fillColor: .white,
+                    strokeColor: Color(UIColor(hex: 0x163570)),
+                    strokeWidth: 1.1
+                )
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
-        .background(
-            LinearGradient(
-                colors: [Color(UIColor(hex: 0xFF8E36)), Color(UIColor(hex: 0xF26B26))],
-                startPoint: .top,
-                endPoint: .bottom
+        .offset(y: floatLogo ? -4 : 0)
+    }
+
+    private func seasonalCard(compact: Bool) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color(UIColor(hex: 0x8C2E0E)).opacity(0.38))
+                .offset(y: 5)
+
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(save.data.stats.eventCompleted ? "🍁 SEASONAL EVENT • CLEARED ✓" : "🍁 SEASONAL EVENT")
+                        .font(.system(size: 10.5, weight: .heavy, design: .rounded))
+                        .foregroundColor(Color(UIColor(hex: 0xFFF2BD)))
+                    StrokedText(
+                        text: "Maple Bus Escape Challenge",
+                        font: .system(size: compact ? 15 : 16.5, weight: .black, design: .rounded),
+                        fillColor: .white,
+                        strokeColor: Color(UIColor(hex: 0x7A1F05)),
+                        strokeWidth: 1.0
+                    )
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    Text("Autumn maple loop • Bonus coins!")
+                        .font(.system(size: 11.5, weight: .bold, design: .rounded))
+                        .foregroundColor(Color(UIColor(hex: 0xFFEBD1)))
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 4)
+                Button {
+                    SoundEngine.shared.playTap()
+                    onPlayLevel(101, true)
+                } label: {
+                    ZStack {
+                        Capsule()
+                            .fill(Color(UIColor(hex: 0x189629)))
+                            .offset(y: 3)
+                        Text("Play Event")
+                            .font(.system(size: 13, weight: .heavy, design: .rounded))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 13)
+                            .padding(.vertical, 8)
+                            .background(Color(UIColor(hex: 0x34D349)))
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color.white, lineWidth: 2))
+                    }
+                    .fixedSize()
+                }
+                .accessibilityIdentifier("home_event_button")
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, compact ? 10 : 12)
+            .background(
+                ZStack(alignment: .top) {
+                    Color(UIColor(hex: 0xF26B26))
+                    Color(UIColor(hex: 0xFF8E36))
+                        .frame(height: compact ? 42 : 48)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .padding(3)
+                }
             )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color(UIColor(hex: 0xFFE49E)), lineWidth: 2.5))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(UIColor(hex: 0xFFE49E)), lineWidth: 2.5))
+        }
+        .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, 18)
     }
 
-    private func milestoneCard(targetLevel: Int) -> some View {
+    private func milestoneCard(targetLevel: Int, compact: Bool) -> some View {
         let startNode = max(1, targetLevel - 2)
         let badgeText = targetLevel > 25 ? "∞ ENDLESS MODE ACTIVE" : "NEXT MILESTONE ROADMAP"
         let hintText: String
@@ -247,112 +447,153 @@ struct HomeView: View {
         else if targetLevel <= 25 { hintText = "Endless Auto-Generated Levels unlock after Level 25!" }
         else { hintText = "Endless Level \(targetLevel) • Procedurally generated & verified!" }
 
-        return VStack(spacing: 9) {
-            Text("\(badgeText)   •   ★ \(save.totalStars()) Stars")
-                .font(.system(size: 11.5, weight: .bold, design: .rounded))
-                .foregroundColor(Color(UIColor(hex: 0x2E6CC4)))
+        return ZStack {
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color(UIColor(hex: 0x1F3A63)).opacity(0.2))
+                .offset(y: 4)
 
-            HStack(spacing: 0) {
-                ForEach(0..<5, id: \.self) { i in
-                    let lv = startNode + i
-                    let isDone = lv < save.data.highestUnlockedLevel
-                    let isCurr = lv == targetLevel
-                    ZStack {
-                        Circle()
-                            .fill(Color(UIColor(hex: isCurr ? 0x34D349 : (isDone ? 0x3B8EFF : 0x9AA8BF))))
-                            .frame(width: isCurr ? 40 : 32, height: isCurr ? 40 : 32)
-                            .overlay(Circle().stroke(Color(UIColor(hex: isCurr ? 0xFFE047 : 0xFFFFFF)), lineWidth: 2.5))
-                        Text("\(lv)")
-                            .font(.system(size: isCurr ? 15 : 13, weight: .black, design: .rounded))
-                            .foregroundColor(.white)
-                    }
-                    if i < 4 {
-                        Rectangle()
-                            .fill(Color(UIColor(hex: isDone ? 0x34D349 : 0xCBD6E8)))
-                            .frame(height: 5)
+            VStack(spacing: compact ? 7 : 9) {
+                Text("\(badgeText)   •   ★ \(save.totalStars()) Stars")
+                    .font(.system(size: 11.5, weight: .bold, design: .rounded))
+                    .foregroundColor(Color(UIColor(hex: 0x2E6CC4)))
+
+                HStack(spacing: 0) {
+                    ForEach(0..<5, id: \.self) { i in
+                        let lv = startNode + i
+                        let isDone = lv < save.data.highestUnlockedLevel
+                        let isCurr = lv == targetLevel
+                        ZStack {
+                            Circle()
+                                .fill(Color(UIColor(hex: isCurr ? 0x34D349 : (isDone ? 0x3B8EFF : 0x9AA8BF))))
+                                .frame(width: isCurr ? (compact ? 34 : 38) : (compact ? 28 : 30),
+                                       height: isCurr ? (compact ? 34 : 38) : (compact ? 28 : 30))
+                                .overlay(Circle().stroke(Color(UIColor(hex: isCurr ? 0xFFE047 : 0xFFFFFF)), lineWidth: 2.5))
+                            Text("\(lv)")
+                                .font(.system(size: isCurr ? 14.5 : 12.5, weight: .black, design: .rounded))
+                                .foregroundColor(.white)
+                        }
+                        if i < 4 {
+                            Rectangle()
+                                .fill(Color(UIColor(hex: isDone ? 0x34D349 : 0xCBD6E8)))
+                                .frame(height: 5)
+                        }
                     }
                 }
-            }
-            .padding(.horizontal, 6)
+                .padding(.horizontal, 8)
 
-            Text(hintText)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
-                .foregroundColor(Color(UIColor(hex: 0x4C5F80)))
-                .multilineTextAlignment(.center)
+                Text(hintText)
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundColor(Color(UIColor(hex: 0x4C5F80)))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, compact ? 9 : 11)
+            .background(Color.white.opacity(0.95))
+            .clipShape(RoundedRectangle(cornerRadius: 18))
+            .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color(UIColor(hex: 0x7CB8FF)), lineWidth: 2.5))
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 11)
-        .background(Color.white.opacity(0.94))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color(UIColor(hex: 0x7CB8FF)), lineWidth: 2.5))
+        .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, 18)
     }
 
-    private func scenicRoadBackdrop(width: CGFloat) -> some View {
-        ZStack(alignment: .top) {
-            VStack(spacing: 0) {
-                HStack(spacing: -30) {
-                    Ellipse().fill(Color(UIColor(hex: 0x79D457))).frame(width: width * 0.62, height: 64)
-                    Ellipse().fill(Color(UIColor(hex: 0x5DBB42))).frame(width: width * 0.62, height: 54)
-                }
-                .offset(y: 16)
+    private func playCTAButton(targetLevel: Int, compact: Bool) -> some View {
+        let btnW: CGFloat = compact ? 236 : 260
+        let btnH: CGFloat = compact ? 54 : 60
 
-                Rectangle()
-                    .fill(Color(UIColor(hex: 0x4E596E)))
-                    .frame(width: width, height: 176)
+        return Button {
+            SoundEngine.shared.playTap()
+            onPlayLevel(targetLevel, false)
+        } label: {
+            ZStack {
+                Capsule()
+                    .fill(Color(UIColor(hex: 0x158C24)))
+                    .frame(width: btnW, height: btnH)
+                    .offset(y: 4)
+                Capsule()
+                    .fill(Color(UIColor(hex: 0x34D349)))
+                    .frame(width: btnW, height: btnH - 2)
+                    .overlay(Capsule().stroke(Color.white, lineWidth: 3))
+                Text("PLAY  LEVEL \(targetLevel)")
+                    .font(.system(size: compact ? 19 : 21, weight: .black, design: .rounded))
+                    .foregroundColor(.white)
             }
-
-            HStack(spacing: 44) {
-                ForEach([BusColor.pink, .green, .blue, .yellow, .orange], id: \.self) { color in
-                    Image(uiImage: VectorTextures.shared.busUIImage(for: color))
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 56, height: 36)
-                }
-            }
-            .offset(x: busRollOffset, y: 40)
         }
-        .frame(width: width, height: 214)
-        .clipped()
+        .scaleEffect(pulsePlay ? 1.03 : 1.0)
+        .accessibilityIdentifier("home_play_button")
     }
 
-    private func navButton(title: String, icon: String, topColor: UInt32, botColor: UInt32, action: @escaping () -> Void) -> some View {
-        Button {
+    private func bottomNavDock(compact: Bool) -> some View {
+        HStack(spacing: 12) {
+            navButton(title: "Levels", icon: "map.fill", topColor: 0x3B8EFF, botColor: 0x1A5FC2, compact: compact) {
+                levelPage = max(0, (save.data.currentLevel - 1) / 20)
+                activeSheet = .levels
+            }
+            .accessibilityIdentifier("home_levels_button")
+            navButton(title: "Missions", icon: "target", topColor: 0x9B51E0, botColor: 0x6724AB, compact: compact) {
+                activeSheet = .missions
+            }
+            .accessibilityIdentifier("home_missions_button")
+            navButton(title: "Leaders", icon: "trophy.fill", topColor: 0xFF8A1F, botColor: 0xC75600, compact: compact) {
+                activeSheet = .leaders
+            }
+            .accessibilityIdentifier("home_leaders_button")
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, compact ? 6 : 10)
+        .padding(.bottom, compact ? 8 : 10)
+    }
+
+    private func navButton(
+        title: String,
+        icon: String,
+        topColor: UInt32,
+        botColor: UInt32,
+        compact: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        let h: CGFloat = compact ? 52 : 58
+        return Button {
             SoundEngine.shared.playTap()
             action()
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(UIColor(hex: botColor)))
-                    .frame(height: 60)
+                    .frame(height: h)
                     .offset(y: 4)
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(UIColor(hex: topColor)))
-                    .frame(height: 58)
+                    .frame(height: h - 2)
                     .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white, lineWidth: 2.5))
                 VStack(spacing: 2) {
-                    Text(icon).font(.system(size: 19))
+                    Image(systemName: icon)
+                        .font(.system(size: compact ? 16 : 18, weight: .bold))
+                        .foregroundColor(.white)
                     Text(title)
-                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .font(.system(size: compact ? 12 : 13, weight: .heavy, design: .rounded))
                         .foregroundColor(.white)
                 }
             }
         }
     }
 
-    // MARK: - Home Modals
+    // MARK: - Home Modals (Tight Auto-Fit + Scrollable Only When Needed)
 
     @ViewBuilder
-    private func modalOverlay(_ kind: HomeModalKind) -> some View {
+    private func modalOverlay(_ kind: HomeModalKind, screenH: CGFloat, screenW: CGFloat) -> some View {
+        let maxModalH = max(280, screenH * 0.78)
+        let displayH = measuredModalHeight > 20 ? min(maxModalH, measuredModalHeight) : min(maxModalH, 420)
+
         ZStack {
             Color(UIColor(hex: 0x0C162B, alpha: 0.62))
-                .ignoresSafeArea()
                 .onTapGesture {
                     SoundEngine.shared.playTap()
+                    measuredModalHeight = 0
                     activeSheet = nil
                 }
 
-            ScrollView(.vertical, showsIndicators: false) {
+            ScrollView(.vertical, showsIndicators: measuredModalHeight > maxModalH) {
                 VStack(spacing: 0) {
                     switch kind {
                     case .levels: levelsModalContent
@@ -362,11 +603,24 @@ struct HomeView: View {
                     }
                 }
                 .padding(18)
+                .background(
+                    GeometryReader { contentGeo in
+                        Color.clear.preference(key: ModalHeightKey.self, value: contentGeo.size.height)
+                    }
+                )
             }
-            .frame(maxHeight: UIScreen.main.bounds.height * 0.72)
+            .id(kind)
+            .onPreferenceChange(ModalHeightKey.self) { h in
+                if h > 80 {
+                    measuredModalHeight = h
+                }
+            }
+            .frame(maxWidth: min(screenW - 36, 400))
+            .frame(height: displayH)
             .background(Color(UIColor(hex: 0xFFF9ED)))
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color(UIColor(hex: modalAccent(kind))), lineWidth: 4))
+            .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 8)
             .padding(.horizontal, 18)
         }
     }
@@ -383,7 +637,7 @@ struct HomeView: View {
     private func modalHeader(title: String, accent: UInt32) -> some View {
         HStack {
             Text(title)
-                .font(.system(size: 19, weight: .black, design: .rounded))
+                .font(.system(size: 18, weight: .black, design: .rounded))
                 .foregroundColor(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -392,12 +646,13 @@ struct HomeView: View {
             Spacer()
             Button {
                 SoundEngine.shared.playTap()
+                measuredModalHeight = 0
                 activeSheet = nil
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.system(size: 15, weight: .bold))
                     .foregroundColor(Color(UIColor(hex: 0x6E7E99)))
-                    .frame(width: 40, height: 40)
+                    .frame(width: 38, height: 38)
                     .background(Color(UIColor(hex: 0xE8EFFA)))
                     .clipShape(Circle())
             }
@@ -415,7 +670,7 @@ struct HomeView: View {
         return VStack(spacing: 12) {
             modalHeader(title: title, accent: 0x3B8EFF)
 
-            LazyVGrid(columns: columns, spacing: 10) {
+            LazyVGrid(columns: columns, spacing: 9) {
                 ForEach(startId...endId, id: \.self) { lv in
                     let unlocked = lv <= save.data.highestUnlockedLevel
                     let stars = save.data.starsByLevel[lv] ?? 0
@@ -426,14 +681,20 @@ struct HomeView: View {
                         onPlayLevel(lv, false)
                     } label: {
                         VStack(spacing: 3) {
-                            Text(unlocked ? "\(lv)" : "🔒")
-                                .font(.system(size: unlocked ? 17 : 15, weight: .black, design: .rounded))
-                                .foregroundColor(.white)
+                            if unlocked {
+                                Text("\(lv)")
+                                    .font(.system(size: 17, weight: .black, design: .rounded))
+                                    .foregroundColor(.white)
+                            } else {
+                                Image(systemName: "lock.fill")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(.white.opacity(0.92))
+                            }
                             Text(unlocked ? (stars > 0 ? String(repeating: "★", count: stars) : (lv > 25 ? "∞" : "")) : "Lv.\(lv)")
                                 .font(.system(size: 10, weight: .bold, design: .rounded))
                                 .foregroundColor(Color(UIColor(hex: stars > 0 ? 0xFFE259 : 0xE2ECFF)))
                         }
-                        .frame(height: 54)
+                        .frame(height: 52)
                         .frame(maxWidth: .infinity)
                         .background(Color(UIColor(hex: unlocked ? 0x4CA6FF : 0x9AA8BF)))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -475,7 +736,7 @@ struct HomeView: View {
                         .clipShape(Capsule())
                 }
             }
-            .padding(.top, 4)
+            .padding(.top, 2)
         }
     }
 
@@ -504,18 +765,24 @@ struct HomeView: View {
                                 SoundEngine.shared.playCoin()
                             }
                         } label: {
-                            Text("+\(m.rewardCoins) 🪙")
-                                .font(.system(size: 13, weight: .heavy, design: .rounded))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 7)
-                                .background(Color(UIColor(hex: 0x34D349)))
-                                .clipShape(Capsule())
+                            HStack(spacing: 4) {
+                                Text("+\(m.rewardCoins)")
+                                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                                    .foregroundColor(.white)
+                                GoldCoinBadge(size: 14)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 7)
+                            .background(Color(UIColor(hex: 0x34D349)))
+                            .clipShape(Capsule())
                         }
                     } else {
-                        Text("🪙 \(m.rewardCoins)")
-                            .font(.system(size: 13.5, weight: .bold, design: .rounded))
-                            .foregroundColor(Color(UIColor(hex: 0x8F6200)))
+                        HStack(spacing: 4) {
+                            GoldCoinBadge(size: 15)
+                            Text("\(m.rewardCoins)")
+                                .font(.system(size: 13.5, weight: .bold, design: .rounded))
+                                .foregroundColor(Color(UIColor(hex: 0x8F6200)))
+                        }
                     }
                 }
                 .padding(.horizontal, 12)
@@ -602,7 +869,7 @@ struct HomeView: View {
             Text("Stats: \(save.data.stats.levelsWon) Wins • \(save.data.stats.passengersBoarded) Boarded")
                 .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundColor(Color(UIColor(hex: 0x5B6E8F)))
-                .padding(.top, 4)
+                .padding(.top, 2)
         }
     }
 }
