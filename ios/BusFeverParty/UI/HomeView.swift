@@ -1,9 +1,9 @@
 import SwiftUI
 
 private struct HomeSafeMetrics: Equatable {
-    var top: CGFloat
-    var bottom: CGFloat
-    var usableHeight: CGFloat
+    var top: CGFloat = 0
+    var bottom: CGFloat = 0
+    var usableHeight: CGFloat = 750
 
     static func initial() -> HomeSafeMetrics {
         let windowScene = UIApplication.shared.connectedScenes
