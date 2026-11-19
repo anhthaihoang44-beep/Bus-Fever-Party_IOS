@@ -1,0 +1,75 @@
+{
+  "id": 1,
+  "name": "Sunny Station",
+  "gridSize": {
+    "cols": 4,
+    "rows": 4
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "blue",
+      "capacity": 6,
+      "x": 0.5,
+      "y": 1,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "red",
+      "capacity": 6,
+      "x": 2,
+      "y": 0.5,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "yellow",
+      "capacity": 6,
+      "x": 1.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "blue",
+      "capacity": 6,
+      "x": 2.5,
+      "y": 2,
+      "direction": "up",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [],
+  "passengerQueue": [
+    {
+      "color": "blue",
+      "count": 6
+    },
+    {
+      "color": "red",
+      "count": 6
+    },
+    {
+      "color": "blue",
+      "count": 6
+    },
+    {
+      "color": "yellow",
+      "count": 6
+    }
+  ],
+  "trackShape": "ring",
+  "theme": "city",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": false,
+    "arrange": false,
+    "jumble": false
+  },
+  "undoLimit": 3,
+  "tutorialHint": "Tap a clear bus to pick up matching passengers!"
+}

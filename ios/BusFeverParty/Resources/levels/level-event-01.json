@@ -1,0 +1,192 @@
+{
+  "id": 101,
+  "name": "Autumn Maple Fest",
+  "isEvent": true,
+  "eventName": "Maple Bus Escape Challenge",
+  "gridSize": {
+    "cols": 6,
+    "rows": 6
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "orange",
+      "capacity": 8,
+      "x": 0.5,
+      "y": 0,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "red",
+      "capacity": 9,
+      "x": 2,
+      "y": 0.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "yellow",
+      "capacity": 8,
+      "x": 4.5,
+      "y": 0,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "brown",
+      "capacity": 6,
+      "x": 0,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "green",
+      "capacity": 8,
+      "x": 1,
+      "y": 1.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "orange",
+      "capacity": 9,
+      "x": 4,
+      "y": 1.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b7",
+      "color": "orange",
+      "capacity": 8,
+      "x": 5,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "red",
+      "capacity": 9,
+      "x": 0.5,
+      "y": 3,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b9",
+      "color": "yellow",
+      "capacity": 8,
+      "x": 4.5,
+      "y": 3,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b10",
+      "color": "brown",
+      "capacity": 6,
+      "x": 1,
+      "y": 4.5,
+      "direction": "down",
+      "type": "mystery",
+      "unlockAfter": 4
+    },
+    {
+      "id": "b11",
+      "color": "green",
+      "capacity": 8,
+      "x": 2,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b12",
+      "color": "orange",
+      "capacity": 9,
+      "x": 3,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "o1",
+      "x": 2,
+      "y": 2
+    },
+    {
+      "id": "o2",
+      "x": 3,
+      "y": 2
+    }
+  ],
+  "passengerQueue": [
+    {
+      "color": "yellow",
+      "count": 8
+    },
+    {
+      "color": "orange",
+      "count": 8
+    },
+    {
+      "color": "green",
+      "count": 8
+    },
+    {
+      "color": "red",
+      "count": 4
+    },
+    {
+      "color": "brown",
+      "count": 6
+    },
+    {
+      "color": "red",
+      "count": 4
+    },
+    {
+      "color": "orange",
+      "count": 13
+    },
+    {
+      "color": "red",
+      "count": 10
+    },
+    {
+      "color": "orange",
+      "count": 13
+    },
+    {
+      "color": "yellow",
+      "count": 8
+    },
+    {
+      "color": "green",
+      "count": 8
+    },
+    {
+      "color": "brown",
+      "count": 6
+    }
+  ],
+  "trackShape": "heart",
+  "theme": "maple",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": true,
+    "jumble": true
+  },
+  "undoLimit": 4
+}

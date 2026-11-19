@@ -1,0 +1,217 @@
+{
+  "id": 13,
+  "name": "Jumble Meadow",
+  "gridSize": {
+    "cols": 6,
+    "rows": 6
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "yellow",
+      "capacity": 6,
+      "x": 0.5,
+      "y": 0,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b2",
+      "color": "purple",
+      "capacity": 9,
+      "x": 2,
+      "y": 0.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b3",
+      "color": "green",
+      "capacity": 8,
+      "x": 4.5,
+      "y": 0,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b4",
+      "color": "red",
+      "capacity": 6,
+      "x": 0,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b5",
+      "color": "cyan",
+      "capacity": 9,
+      "x": 1,
+      "y": 1.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b6",
+      "color": "orange",
+      "capacity": 8,
+      "x": 4,
+      "y": 1.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b7",
+      "color": "yellow",
+      "capacity": 6,
+      "x": 5,
+      "y": 1.5,
+      "direction": "up",
+      "type": "normal"
+    },
+    {
+      "id": "b8",
+      "color": "purple",
+      "capacity": 9,
+      "x": 0.5,
+      "y": 3,
+      "direction": "left",
+      "type": "normal"
+    },
+    {
+      "id": "b9",
+      "color": "green",
+      "capacity": 8,
+      "x": 4.5,
+      "y": 3,
+      "direction": "right",
+      "type": "normal"
+    },
+    {
+      "id": "b10",
+      "color": "red",
+      "capacity": 6,
+      "x": 0,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b11",
+      "color": "cyan",
+      "capacity": 9,
+      "x": 1,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b12",
+      "color": "orange",
+      "capacity": 8,
+      "x": 2,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b13",
+      "color": "yellow",
+      "capacity": 6,
+      "x": 3,
+      "y": 4.5,
+      "direction": "down",
+      "type": "normal"
+    },
+    {
+      "id": "b14",
+      "color": "purple",
+      "capacity": 9,
+      "x": 4.5,
+      "y": 4,
+      "direction": "right",
+      "type": "normal"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "o1",
+      "x": 2,
+      "y": 2
+    },
+    {
+      "id": "o2",
+      "x": 3,
+      "y": 2
+    },
+    {
+      "id": "o3",
+      "x": 3,
+      "y": 0
+    }
+  ],
+  "passengerQueue": [
+    {
+      "color": "orange",
+      "count": 8
+    },
+    {
+      "color": "purple",
+      "count": 18
+    },
+    {
+      "color": "green",
+      "count": 4
+    },
+    {
+      "color": "yellow",
+      "count": 6
+    },
+    {
+      "color": "cyan",
+      "count": 4
+    },
+    {
+      "color": "green",
+      "count": 12
+    },
+    {
+      "color": "cyan",
+      "count": 5
+    },
+    {
+      "color": "yellow",
+      "count": 12
+    },
+    {
+      "color": "cyan",
+      "count": 9
+    },
+    {
+      "color": "red",
+      "count": 6
+    },
+    {
+      "color": "purple",
+      "count": 9
+    },
+    {
+      "color": "red",
+      "count": 6
+    },
+    {
+      "color": "orange",
+      "count": 8
+    }
+  ],
+  "trackShape": "ring",
+  "theme": "park",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": true,
+    "jumble": true
+  },
+  "undoLimit": 3,
+  "tutorialHint": "Jumble Booster unlocked! Shuffle the queue colors anytime."
+}

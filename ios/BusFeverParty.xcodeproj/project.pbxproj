@@ -1,0 +1,414 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA0000010000000000000001 /* BusFeverPartyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000010000000000000001 /* BusFeverPartyApp.swift */; };
+		AA0000020000000000000001 /* GameTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000001 /* GameTypes.swift */; };
+		AA0000030000000000000001 /* BusSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000030000000000000001 /* BusSystem.swift */; };
+		AA0000040000000000000001 /* ParkingLot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000040000000000000001 /* ParkingLot.swift */; };
+		AA0000050000000000000001 /* PassengerSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000050000000000000001 /* PassengerSystem.swift */; };
+		AA0000060000000000000001 /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000060000000000000001 /* GameEngine.swift */; };
+		AA0000070000000000000001 /* BoosterSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000070000000000000001 /* BoosterSystem.swift */; };
+		AA0000080000000000000001 /* LevelSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000080000000000000001 /* LevelSolver.swift */; };
+		AA0000090000000000000001 /* InfiniteLevelGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000090000000000000001 /* InfiniteLevelGenerator.swift */; };
+		AA0000100000000000000001 /* LevelRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000100000000000000001 /* LevelRepository.swift */; };
+		AA0000110000000000000001 /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000110000000000000001 /* SaveManager.swift */; };
+		AA0000120000000000000001 /* SoundEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000120000000000000001 /* SoundEngine.swift */; };
+		AA0000130000000000000001 /* TrackGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000130000000000000001 /* TrackGeometry.swift */; };
+		AA0000140000000000000001 /* VectorTextures.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000140000000000000001 /* VectorTextures.swift */; };
+		AA0000150000000000000001 /* BusBoardSKScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000150000000000000001 /* BusBoardSKScene.swift */; };
+		AA0000160000000000000001 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000160000000000000001 /* HomeView.swift */; };
+		AA0000170000000000000001 /* GameContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000170000000000000001 /* GameContainerView.swift */; };
+		AA0000180000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB0000180000000000000001 /* Assets.xcassets */; };
+		AA0000190000000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB0000190000000000000001 /* LaunchScreen.storyboard */; };
+		AA0000200000000000000001 /* levels in Resources */ = {isa = PBXBuildFile; fileRef = BB0000200000000000000001 /* levels */; };
+		AA0000210000000000000001 /* BusFeverPartyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000210000000000000001 /* BusFeverPartyTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CC0000010000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE0000010000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD0000010000000000000001;
+			remoteInfo = BusFeverParty;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		BB0000010000000000000001 /* BusFeverPartyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/BusFeverPartyApp.swift; sourceTree = "<group>"; };
+		BB0000020000000000000001 /* GameTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/GameTypes.swift; sourceTree = "<group>"; };
+		BB0000030000000000000001 /* BusSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Systems/BusSystem.swift; sourceTree = "<group>"; };
+		BB0000040000000000000001 /* ParkingLot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Systems/ParkingLot.swift; sourceTree = "<group>"; };
+		BB0000050000000000000001 /* PassengerSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Systems/PassengerSystem.swift; sourceTree = "<group>"; };
+		BB0000060000000000000001 /* GameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Systems/GameEngine.swift; sourceTree = "<group>"; };
+		BB0000070000000000000001 /* BoosterSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Systems/BoosterSystem.swift; sourceTree = "<group>"; };
+		BB0000080000000000000001 /* LevelSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Systems/LevelSolver.swift; sourceTree = "<group>"; };
+		BB0000090000000000000001 /* InfiniteLevelGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Systems/InfiniteLevelGenerator.swift; sourceTree = "<group>"; };
+		BB0000100000000000000001 /* LevelRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/LevelRepository.swift; sourceTree = "<group>"; };
+		BB0000110000000000000001 /* SaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/SaveManager.swift; sourceTree = "<group>"; };
+		BB0000120000000000000001 /* SoundEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/SoundEngine.swift; sourceTree = "<group>"; };
+		BB0000130000000000000001 /* TrackGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graphics/TrackGeometry.swift; sourceTree = "<group>"; };
+		BB0000140000000000000001 /* VectorTextures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graphics/VectorTextures.swift; sourceTree = "<group>"; };
+		BB0000150000000000000001 /* BusBoardSKScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scenes/BusBoardSKScene.swift; sourceTree = "<group>"; };
+		BB0000160000000000000001 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI/HomeView.swift; sourceTree = "<group>"; };
+		BB0000170000000000000001 /* GameContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI/GameContainerView.swift; sourceTree = "<group>"; };
+		BB0000180000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BB0000190000000000000001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		BB0000200000000000000001 /* levels */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources/levels; sourceTree = "<group>"; };
+		BB0000210000000000000001 /* BusFeverPartyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusFeverPartyTests.swift; sourceTree = "<group>"; };
+		BB0000220000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FF0000010000000000000001 /* BusFeverParty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BusFeverParty.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF0000020000000000000001 /* BusFeverPartyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusFeverPartyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		110000010000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		110000020000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		220000010000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				220000020000000000000001 /* BusFeverParty */,
+				220000030000000000000001 /* BusFeverPartyTests */,
+				220000040000000000000001 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		220000020000000000000001 /* BusFeverParty */ = {
+			isa = PBXGroup;
+			children = (
+				BB0000010000000000000001 /* BusFeverPartyApp.swift */,
+				BB0000020000000000000001 /* GameTypes.swift */,
+				BB0000030000000000000001 /* BusSystem.swift */,
+				BB0000040000000000000001 /* ParkingLot.swift */,
+				BB0000050000000000000001 /* PassengerSystem.swift */,
+				BB0000060000000000000001 /* GameEngine.swift */,
+				BB0000070000000000000001 /* BoosterSystem.swift */,
+				BB0000080000000000000001 /* LevelSolver.swift */,
+				BB0000090000000000000001 /* InfiniteLevelGenerator.swift */,
+				BB0000100000000000000001 /* LevelRepository.swift */,
+				BB0000110000000000000001 /* SaveManager.swift */,
+				BB0000120000000000000001 /* SoundEngine.swift */,
+				BB0000130000000000000001 /* TrackGeometry.swift */,
+				BB0000140000000000000001 /* VectorTextures.swift */,
+				BB0000150000000000000001 /* BusBoardSKScene.swift */,
+				BB0000160000000000000001 /* HomeView.swift */,
+				BB0000170000000000000001 /* GameContainerView.swift */,
+				BB0000180000000000000001 /* Assets.xcassets */,
+				BB0000190000000000000001 /* LaunchScreen.storyboard */,
+				BB0000200000000000000001 /* levels */,
+				BB0000220000000000000001 /* Info.plist */,
+			);
+			path = BusFeverParty;
+			sourceTree = "<group>";
+		};
+		220000030000000000000001 /* BusFeverPartyTests */ = {
+			isa = PBXGroup;
+			children = (
+				BB0000210000000000000001 /* BusFeverPartyTests.swift */,
+			);
+			path = BusFeverPartyTests;
+			sourceTree = "<group>";
+		};
+		220000040000000000000001 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FF0000010000000000000001 /* BusFeverParty.app */,
+				FF0000020000000000000001 /* BusFeverPartyTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DD0000010000000000000001 /* BusFeverParty */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 440000020000000000000001 /* Build configuration list for PBXNativeTarget "BusFeverParty" */;
+			buildPhases = (
+				330000010000000000000001 /* Sources */,
+				110000010000000000000001 /* Frameworks */,
+				550000010000000000000001 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = BusFeverParty;
+			productName = BusFeverParty;
+			productReference = FF0000010000000000000001 /* BusFeverParty.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DD0000020000000000000001 /* BusFeverPartyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 440000030000000000000001 /* Build configuration list for PBXNativeTarget "BusFeverPartyTests" */;
+			buildPhases = (
+				330000020000000000000001 /* Sources */,
+				110000020000000000000001 /* Frameworks */,
+				550000020000000000000001 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = (
+				CC0000020000000000000001 /* PBXTargetDependency */,
+			);
+			name = BusFeverPartyTests;
+			productName = BusFeverPartyTests;
+			productReference = FF0000020000000000000001 /* BusFeverPartyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EE0000010000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					DD0000010000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					DD0000020000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = DD0000010000000000000001;
+					};
+				};
+			};
+			buildConfigurationList = 440000010000000000000001 /* Build configuration list for PBXProject "BusFeverParty" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 220000010000000000000001;
+			productRefGroup = 220000040000000000000001 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DD0000010000000000000001 /* BusFeverParty */,
+				DD0000020000000000000001 /* BusFeverPartyTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		550000010000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000180000000000000001 /* Assets.xcassets in Resources */,
+				AA0000190000000000000001 /* LaunchScreen.storyboard in Resources */,
+				AA0000200000000000000001 /* levels in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		550000020000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		330000010000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000010000000000000001 /* BusFeverPartyApp.swift in Sources */,
+				AA0000020000000000000001 /* GameTypes.swift in Sources */,
+				AA0000030000000000000001 /* BusSystem.swift in Sources */,
+				AA0000040000000000000001 /* ParkingLot.swift in Sources */,
+				AA0000050000000000000001 /* PassengerSystem.swift in Sources */,
+				AA0000060000000000000001 /* GameEngine.swift in Sources */,
+				AA0000070000000000000001 /* BoosterSystem.swift in Sources */,
+				AA0000080000000000000001 /* LevelSolver.swift in Sources */,
+				AA0000090000000000000001 /* InfiniteLevelGenerator.swift in Sources */,
+				AA0000100000000000000001 /* LevelRepository.swift in Sources */,
+				AA0000110000000000000001 /* SaveManager.swift in Sources */,
+				AA0000120000000000000001 /* SoundEngine.swift in Sources */,
+				AA0000130000000000000001 /* TrackGeometry.swift in Sources */,
+				AA0000140000000000000001 /* VectorTextures.swift in Sources */,
+				AA0000150000000000000001 /* BusBoardSKScene.swift in Sources */,
+				AA0000160000000000000001 /* HomeView.swift in Sources */,
+				AA0000170000000000000001 /* GameContainerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		330000020000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000210000000000000001 /* BusFeverPartyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CC0000020000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD0000010000000000000001 /* BusFeverParty */;
+			targetProxy = CC0000010000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		660000010000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		660000020000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		660000030000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BusFeverParty/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.busfever.partyloop;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		660000040000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BusFeverParty/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.busfever.partyloop;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		660000050000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.busfever.partyloopTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BusFeverParty.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BusFeverParty";
+			};
+			name = Debug;
+		};
+		660000060000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.busfever.partyloopTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BusFeverParty.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BusFeverParty";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		440000010000000000000001 /* Build configuration list for PBXProject "BusFeverParty" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				660000010000000000000001 /* Debug */,
+				660000020000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		440000020000000000000001 /* Build configuration list for PBXNativeTarget "BusFeverParty" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				660000030000000000000001 /* Debug */,
+				660000040000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		440000030000000000000001 /* Build configuration list for PBXNativeTarget "BusFeverPartyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				660000050000000000000001 /* Debug */,
+				660000060000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EE0000010000000000000001 /* Project object */;
+}

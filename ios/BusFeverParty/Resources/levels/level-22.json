@@ -1,0 +1,285 @@
+{
+  "id": 22,
+  "name": "Crosswind Plaza",
+  "gridSize": {
+    "cols": 8,
+    "rows": 8
+  },
+  "buses": [
+    {
+      "id": "b1",
+      "color": "orange",
+      "capacity": 9,
+      "x": 3.5,
+      "y": -0.28,
+      "direction": "up-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b2",
+      "color": "brown",
+      "capacity": 8,
+      "x": 2.24,
+      "y": 0.98,
+      "direction": "up-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b3",
+      "color": "navy",
+      "capacity": 9,
+      "x": 0.98,
+      "y": 2.24,
+      "direction": "up-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b4",
+      "color": "pink",
+      "capacity": 6,
+      "x": -0.28,
+      "y": 3.5,
+      "direction": "down-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b5",
+      "color": "cyan",
+      "capacity": 8,
+      "x": 4.76,
+      "y": 0.98,
+      "direction": "up-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b6",
+      "color": "yellow",
+      "capacity": 9,
+      "x": 3.5,
+      "y": 2.24,
+      "direction": "down-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b7",
+      "color": "green",
+      "capacity": 8,
+      "x": 2.24,
+      "y": 3.5,
+      "direction": "up-left",
+      "type": "mystery",
+      "unlockAfter": 6,
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b8",
+      "color": "red",
+      "capacity": 9,
+      "x": 0.98,
+      "y": 4.76,
+      "direction": "down-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b9",
+      "color": "orange",
+      "capacity": 9,
+      "x": 6.02,
+      "y": 2.24,
+      "direction": "up-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b10",
+      "color": "brown",
+      "capacity": 8,
+      "x": 4.76,
+      "y": 3.5,
+      "direction": "down-right",
+      "type": "mystery",
+      "unlockAfter": 8,
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b11",
+      "color": "navy",
+      "capacity": 9,
+      "x": 3.5,
+      "y": 4.76,
+      "direction": "up-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b12",
+      "color": "pink",
+      "capacity": 6,
+      "x": 2.24,
+      "y": 6.02,
+      "direction": "down-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b13",
+      "color": "cyan",
+      "capacity": 8,
+      "x": 7.28,
+      "y": 3.5,
+      "direction": "up-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b14",
+      "color": "yellow",
+      "capacity": 9,
+      "x": 6.02,
+      "y": 4.76,
+      "direction": "down-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b15",
+      "color": "green",
+      "capacity": 8,
+      "x": 4.76,
+      "y": 6.02,
+      "direction": "down-right",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    },
+    {
+      "id": "b16",
+      "color": "red",
+      "capacity": 9,
+      "x": 3.5,
+      "y": 7.28,
+      "direction": "down-left",
+      "type": "normal",
+      "length": 1.5,
+      "width": 0.72
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "o1",
+      "x": -1.6,
+      "y": 3.5,
+      "angle": 45,
+      "width": 0.7,
+      "height": 0.7
+    },
+    {
+      "id": "o2",
+      "x": 8.6,
+      "y": 3.5,
+      "angle": 45,
+      "width": 0.7,
+      "height": 0.7
+    }
+  ],
+  "passengerQueue": [
+    {
+      "color": "green",
+      "count": 8
+    },
+    {
+      "color": "brown",
+      "count": 8
+    },
+    {
+      "color": "red",
+      "count": 9
+    },
+    {
+      "color": "orange",
+      "count": 4
+    },
+    {
+      "color": "pink",
+      "count": 6
+    },
+    {
+      "color": "cyan",
+      "count": 8
+    },
+    {
+      "color": "orange",
+      "count": 5
+    },
+    {
+      "color": "red",
+      "count": 9
+    },
+    {
+      "color": "navy",
+      "count": 9
+    },
+    {
+      "color": "orange",
+      "count": 9
+    },
+    {
+      "color": "yellow",
+      "count": 9
+    },
+    {
+      "color": "brown",
+      "count": 8
+    },
+    {
+      "color": "cyan",
+      "count": 8
+    },
+    {
+      "color": "yellow",
+      "count": 9
+    },
+    {
+      "color": "pink",
+      "count": 6
+    },
+    {
+      "color": "navy",
+      "count": 9
+    },
+    {
+      "color": "green",
+      "count": 8
+    }
+  ],
+  "trackShape": "heart",
+  "theme": "park",
+  "slotsUnlocked": 3,
+  "boostersAvailable": {
+    "vip": true,
+    "arrange": true,
+    "jumble": true
+  },
+  "undoLimit": 4
+}

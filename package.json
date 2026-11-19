@@ -13,8 +13,7 @@
     "android:sync": "npm run build && npx cap sync android",
     "android:apk": "npm run android:sync && cd android && gradlew.bat assembleDebug --no-daemon",
     "android:open": "npx cap open android",
-    "ios:sync": "npm run build && npx cap sync ios",
-    "ios:open": "npx cap open ios",
+    "ios:sync": "node -e \"const fs=require('fs'),p=require('path');for(const f of fs.readdirSync('src/levels'))fs.copyFileSync(p.join('src/levels',f),p.join('ios/BusFeverParty/Resources/levels',f))\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "validate-levels": "tsx scripts/validateLevels.ts"
@@ -22,7 +21,6 @@
   "dependencies": {
     "@capacitor/android": "^8.6.2",
     "@capacitor/core": "^8.6.2",
-    "@capacitor/ios": "^8.6.2",
     "phaser": "^3.88.2"
   },
   "devDependencies": {
