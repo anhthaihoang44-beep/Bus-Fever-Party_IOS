@@ -44,8 +44,23 @@ jobs:
             -destination "platform=iOS Simulator,id=$DEST" \
             -derivedDataPath ios/DerivedDataSim \
             -resultBundlePath ios/TestResults.xcresult
+          WIDE_DEST=$(xcrun simctl list devices available iPhone | grep -E 'Pro Max' | grep -E '\([A-F0-9-]+\)' | head -n 1 | sed -E 's/.*\(([A-F0-9-]+)\).*/\1/')
+          if [ -n "$WIDE_DEST" ] && [ "$WIDE_DEST" != "$DEST" ]; then
+            echo "Running second UI pass on Wide Simulator ID: $WIDE_DEST"
+            xcrun simctl boot "$WIDE_DEST" || true
+            xcrun simctl bootstatus "$WIDE_DEST" -b
+            xcodebuild test-without-building \
+              -project ios/BusFeverParty.xcodeproj \
+              -scheme BusFeverParty \
+              -destination "platform=iOS Simulator,id=$WIDE_DEST" \
+              -derivedDataPath ios/DerivedDataSim \
+              -only-testing:BusFeverPartyUITests
+          fi
           mkdir -p ios_screenshots
           find "$HOME/Library/Developer/CoreSimulator/Devices/$DEST/data" -name "ios_sim_*.png" -exec cp -f {} ios_screenshots/ \; || true
+          if [ -n "$WIDE_DEST" ]; then
+            find "$HOME/Library/Developer/CoreSimulator/Devices/$WIDE_DEST/data" -name "ios_sim_01_home.png" -exec cp -f {} ios_screenshots/ios_sim_wide_home.png \; || true
+          fi
           if [ -z "$(ls -A ios_screenshots)" ]; then
             find "$HOME/Library/Developer/CoreSimulator/Devices" -name "ios_sim_*.png" -exec cp -f {} ios_screenshots/ \; || true
           fi

@@ -1,9 +1,23 @@
 import SwiftUI
 
 private struct HomeSafeMetrics: Equatable {
-    var top: CGFloat = 0
-    var bottom: CGFloat = 0
-    var usableHeight: CGFloat = 750
+    var top: CGFloat
+    var bottom: CGFloat
+    var usableHeight: CGFloat
+
+    static func initial() -> HomeSafeMetrics {
+        let windowScene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first
+        let window = windowScene?.windows.first(where: { $0.isKeyWindow }) ?? windowScene?.windows.first
+        let insets = window?.safeAreaInsets ?? UIEdgeInsets(top: 47, left: 0, bottom: 34, right: 0)
+        let screenH = UIScreen.main.bounds.height
+        return HomeSafeMetrics(
+            top: insets.top,
+            bottom: insets.bottom,
+            usableHeight: max(320, screenH - insets.top - insets.bottom)
+        )
+    }
 }
 
 private struct HomeSafeMetricsKey: PreferenceKey {
@@ -72,7 +86,7 @@ struct HomeView: View {
     @State private var cloudDrift = false
     @State private var busRollOffset: CGFloat = -320
     @State private var measuredModalHeight: CGFloat = 0
-    @State private var safeMetrics = HomeSafeMetrics()
+    @State private var safeMetrics = HomeSafeMetrics.initial()
 
     enum HomeModalKind: Identifiable {
         case levels, missions, leaders, settings
@@ -93,7 +107,7 @@ struct HomeView: View {
     var body: some View {
         let targetLevel = save.data.currentLevel
         let compact = safeMetrics.usableHeight < 700
-        let roadBandH: CGFloat = compact ? 30 : 34
+        let roadBandH: CGFloat = compact ? 38 : 44
         let dockBodyH: CGFloat = compact ? 74 : 84
 
         ZStack {
@@ -108,6 +122,8 @@ struct HomeView: View {
                     dockHeight: dockBodyH + safeMetrics.bottom,
                     roadBandH: roadBandH
                 )
+                .frame(width: w, height: h)
+                .clipped()
             }
             .ignoresSafeArea()
 
@@ -116,7 +132,7 @@ struct HomeView: View {
                 let w = fgGeo.size.width
                 let h = fgGeo.size.height
                 let isCompact = h < 700
-                let roadH: CGFloat = isCompact ? 30 : 34
+                let roadH: CGFloat = isCompact ? 38 : 44
 
                 VStack(spacing: isCompact ? 8 : 12) {
                     topBar(compact: isCompact)
@@ -136,7 +152,7 @@ struct HomeView: View {
 
                     // Keep middle cluster cleanly above the rolling buses and road curb
                     Color.clear
-                        .frame(height: roadH + (isCompact ? 12 : 18))
+                        .frame(height: roadH + (isCompact ? 16 : 24))
 
                     bottomNavDock(compact: isCompact)
                 }
@@ -209,13 +225,13 @@ struct HomeView: View {
             }
             .frame(width: width, height: fullHeight)
 
-            // Subtle drifting clouds placed cleanly below safe area top
-            cloudCluster(scale: 1.0)
-                .position(x: width * 0.16 + (cloudDrift ? 12 : -6), y: safeTop + 92)
-            cloudCluster(scale: 0.72)
-                .position(x: width * 0.52 + (cloudDrift ? -10 : 8), y: safeTop + 56)
-            cloudCluster(scale: 0.86)
-                .position(x: width * 0.85 + (cloudDrift ? 8 : -10), y: safeTop + 114)
+            // Subtle drifting clouds placed cleanly below safe area top bar
+            cloudCluster(scale: 0.92)
+                .position(x: width * 0.14 + (cloudDrift ? 10 : -6), y: safeTop + 112)
+            cloudCluster(scale: 0.68)
+                .position(x: width * 0.50 + (cloudDrift ? -10 : 8), y: safeTop + 64)
+            cloudCluster(scale: 0.84)
+                .position(x: width * 0.86 + (cloudDrift ? 8 : -10), y: safeTop + 130)
 
             // Bottom hills, curb, asphalt, rolling buses, dark slate dock
             VStack(spacing: 0) {
@@ -226,10 +242,10 @@ struct HomeView: View {
                     HStack(spacing: -width * 0.24) {
                         Ellipse()
                             .fill(Color(UIColor(hex: 0x7EDB65)))
-                            .frame(width: width * 0.78, height: 110)
+                            .frame(width: width * 0.78, height: 112)
                         Ellipse()
                             .fill(Color(UIColor(hex: 0x63C94B)))
-                            .frame(width: width * 0.76, height: 98)
+                            .frame(width: width * 0.76, height: 100)
                     }
                     .frame(width: width)
                     .clipped()
@@ -250,21 +266,21 @@ struct HomeView: View {
                             .frame(width: width, height: dockHeight)
                     }
 
-                    // Rolling buses riding right along the asphalt strip above dock
+                    // Rolling buses riding right along middle/upper asphalt road cleanly above dock
                     ZStack {
                         HStack(spacing: 48) {
                             ForEach([BusColor.pink, .yellow, .blue, .green], id: \.self) { color in
                                 Image(uiImage: VectorTextures.shared.busUIImage(for: color))
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .frame(width: 62, height: 36)
+                                    .frame(width: 62, height: 35)
                             }
                         }
                         .offset(x: busRollOffset)
                     }
-                    .frame(width: width, height: roadBandH + 18)
+                    .frame(width: width, height: roadBandH + 22)
                     .clipped()
-                    .offset(y: -(dockHeight + 6))
+                    .offset(y: -(dockHeight + 14))
                 }
                 .frame(width: width)
             }
@@ -319,26 +335,26 @@ struct HomeView: View {
     }
 
     private func heroLogoBadge(width: CGFloat, compact: Bool) -> some View {
-        let badgeW = min(max(220, width - 96), 286)
-        let badgeH: CGFloat = compact ? 76 : 88
+        let badgeW = min(max(210, width - 104), 278)
+        let badgeH: CGFloat = compact ? 76 : 86
 
         return ZStack {
             // Left orange bus peeking behind badge
             Image(uiImage: VectorTextures.shared.busUIImage(for: .orange))
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 56, height: 32)
+                .frame(width: 64, height: 36)
                 .rotationEffect(.degrees(-18))
-                .offset(x: -(badgeW * 0.5 + 8), y: 12)
+                .offset(x: -(badgeW * 0.5 + 14), y: 12)
 
             // Right cyan bus peeking & flipped behind badge
             Image(uiImage: VectorTextures.shared.busUIImage(for: .cyan))
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 56, height: 32)
+                .frame(width: 64, height: 36)
                 .scaleEffect(x: -1, y: 1)
                 .rotationEffect(.degrees(18))
-                .offset(x: badgeW * 0.5 + 8, y: 12)
+                .offset(x: badgeW * 0.5 + 14, y: 12)
 
             RoundedRectangle(cornerRadius: 22)
                 .fill(Color(UIColor(hex: 0x163570)).opacity(0.42))

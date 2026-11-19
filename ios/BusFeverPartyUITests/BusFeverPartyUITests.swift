@@ -26,6 +26,27 @@ final class BusFeverPartyUITests: XCTestCase {
         let playBtn = app.buttons["home_play_button"]
         XCTAssertTrue(playBtn.waitForExistence(timeout: 12), "Home PLAY button should be visible")
         Thread.sleep(forTimeInterval: 1.0)
+
+        let win = app.windows.element(boundBy: 0).frame
+        XCTAssertGreaterThan(win.width, 300)
+        for id in [
+            "home_settings_button",
+            "home_event_button",
+            "home_play_button",
+            "home_levels_button",
+            "home_missions_button",
+            "home_leaders_button"
+        ] {
+            let el = app.buttons[id]
+            XCTAssertTrue(el.waitForExistence(timeout: 5), "\(id) should exist")
+            XCTAssertGreaterThanOrEqual(el.frame.minX, win.minX + 4, "\(id) clipped left: \(el.frame) vs \(win)")
+            XCTAssertLessThanOrEqual(el.frame.maxX, win.maxX - 4, "\(id) clipped right: \(el.frame) vs \(win)")
+            XCTAssertGreaterThanOrEqual(el.frame.minY, win.minY + 4, "\(id) clipped top: \(el.frame) vs \(win)")
+            XCTAssertLessThanOrEqual(el.frame.maxY, win.maxY - 4, "\(id) clipped bottom: \(el.frame) vs \(win)")
+        }
+        XCTAssertLessThan(abs(playBtn.frame.midX - win.midX), 4.0, "PLAY CTA must be horizontally centered")
+        XCTAssertLessThan(abs(app.buttons["home_missions_button"].frame.midX - win.midX), 4.0, "Missions tab must be horizontally centered")
+
         saveShot("ios_sim_01_home")
 
         // Open Levels Modal
@@ -46,8 +67,12 @@ final class BusFeverPartyUITests: XCTestCase {
 
         let pauseBtn = app.buttons["game_pause_button"]
         XCTAssertTrue(pauseBtn.waitForExistence(timeout: 10), "Game HUD pause button should be visible")
-        XCTAssertTrue(app.buttons["game_restart_button"].exists, "Game HUD restart button should be visible")
-        XCTAssertTrue(app.buttons["game_undo_button"].exists, "Game HUD undo button should be visible")
+        for gid in ["game_undo_button", "game_restart_button", "game_pause_button"] {
+            let el = app.buttons[gid]
+            XCTAssertTrue(el.exists, "\(gid) should exist")
+            XCTAssertGreaterThanOrEqual(el.frame.minX, win.minX + 4, "\(gid) clipped left")
+            XCTAssertLessThanOrEqual(el.frame.maxX, win.maxX - 4, "\(gid) clipped right")
+        }
         Thread.sleep(forTimeInterval: 1.0)
         saveShot("ios_sim_03_level1_start")
 
