@@ -621,11 +621,39 @@ struct HomeView: View {
             }
             .frame(height: sz)
         case .leaders:
-            Image(systemName: "trophy.fill")
-                .font(.system(size: sz - 3, weight: .bold))
-                .foregroundColor(Color(UIColor(hex: 0xFFE259)))
-                .shadow(color: Color(UIColor(hex: 0xB35900)), radius: 0, x: 0, y: 1.5)
-                .frame(height: sz)
+            ZStack {
+                // Trophy side handles
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(Color(UIColor(hex: 0xFFE259)), lineWidth: 2)
+                    .frame(width: sz + 2, height: sz * 0.42)
+                    .offset(y: -sz * 0.16)
+                // Cup body
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(UIColor(hex: 0xFFF39C)), Color(UIColor(hex: 0xFFBF1A))],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: sz * 0.62, height: sz * 0.56)
+                    .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color(UIColor(hex: 0xB86200)), lineWidth: 1))
+                    .offset(y: -sz * 0.16)
+                // Stem & Pedestal
+                Rectangle()
+                    .fill(Color(UIColor(hex: 0xFFD24D)))
+                    .frame(width: sz * 0.18, height: sz * 0.24)
+                    .offset(y: sz * 0.18)
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color(UIColor(hex: 0xB86200)))
+                    .frame(width: sz * 0.58, height: sz * 0.20)
+                    .offset(y: sz * 0.34)
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color(UIColor(hex: 0xFFE259)))
+                    .frame(width: sz * 0.52, height: sz * 0.14)
+                    .offset(y: sz * 0.32)
+            }
+            .frame(height: sz)
         case .settings:
             EmptyView()
         }
@@ -682,15 +710,20 @@ struct HomeView: View {
                 // Straddling top ribbon pill + top-right close button matching Android v2352a_e2e_02_levels
                 HStack {
                     Spacer()
-                    Text(modalRibbonTitle(kind))
-                        .font(.system(size: 20, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 26)
-                        .padding(.vertical, 9)
-                        .background(Color(UIColor(hex: accent)))
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(Color.white, lineWidth: 2.5))
-                        .shadow(color: .black.opacity(0.18), radius: 0, x: 0, y: 3)
+                    HStack(spacing: 7) {
+                        if kind == .leaders {
+                            navTabIcon(kind: .leaders, compact: true)
+                        }
+                        Text(modalRibbonTitle(kind))
+                            .font(.system(size: 19, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 9)
+                    .background(Color(UIColor(hex: accent)))
+                    .clipShape(Capsule())
+                    .overlay(Capsule().stroke(Color.white, lineWidth: 2.5))
+                    .shadow(color: .black.opacity(0.18), radius: 0, x: 0, y: 3)
                     Spacer()
                 }
                 .frame(maxWidth: min(screenW - 36, 400))
@@ -729,7 +762,7 @@ struct HomeView: View {
         case .missions:
             return "Missions"
         case .leaders:
-            return "Leaderboard"
+            return "Party Leaderboard"
         case .settings:
             return "Settings"
         }

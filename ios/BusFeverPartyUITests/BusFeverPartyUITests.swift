@@ -61,6 +61,16 @@ final class BusFeverPartyUITests: XCTestCase {
         closeBtn.tap()
         Thread.sleep(forTimeInterval: 0.4)
 
+        // Open Leaderboard Modal
+        let leadersBtn = app.buttons["home_leaders_button"]
+        XCTAssertTrue(leadersBtn.waitForExistence(timeout: 5), "Leaders tab should be visible")
+        leadersBtn.tap()
+        Thread.sleep(forTimeInterval: 0.5)
+        saveShot("ios_sim_06_leaders")
+        XCTAssertTrue(closeBtn.waitForExistence(timeout: 5))
+        closeBtn.tap()
+        Thread.sleep(forTimeInterval: 0.4)
+
         // Start Level 1
         XCTAssertTrue(playBtn.waitForExistence(timeout: 5))
         playBtn.tap()
