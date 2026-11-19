@@ -22,9 +22,15 @@ final class GameCoordinator: ObservableObject, GameSceneDelegate {
         self.undoRemaining = level.undoLimit ?? 3
     }
 
-    func makeScene(aspect: CGFloat) -> BusBoardSKScene {
+    func makeScene() -> BusBoardSKScene {
         if let existing = scene { return existing }
-        let skScene = BusBoardSKScene(level: level, aspect: aspect)
+        let screenSize = UIScreen.main.bounds.size
+        let windowScene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first
+        let window = windowScene?.windows.first(where: { $0.isKeyWindow }) ?? windowScene?.windows.first
+        let insets = window?.safeAreaInsets ?? .zero
+        let skScene = BusBoardSKScene(level: level, screenSize: screenSize, safeTopPts: insets.top, safeBotPts: insets.bottom)
         skScene.gameDelegate = self
         self.scene = skScene
         return skScene
@@ -99,12 +105,40 @@ final class GameCoordinator: ObservableObject, GameSceneDelegate {
     }
 }
 
+private final class GameSKView: SKView {
+    weak var boardScene: BusBoardSKScene?
+
+    private func syncMetrics() {
+        boardScene?.syncViewportMetricsIfNeeded(
+            screenSize: bounds.size,
+            safeTopPts: safeAreaInsets.top,
+            safeBotPts: safeAreaInsets.bottom
+        )
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        syncMetrics()
+    }
+
+    override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        syncMetrics()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        syncMetrics()
+    }
+}
+
 struct SpriteKitBoardRepresentable: UIViewRepresentable {
     let scene: BusBoardSKScene
 
     func makeUIView(context: Context) -> SKView {
-        let view = SKView()
-        view.ignoresSiblingOrder = true
+        let view = GameSKView()
+        view.boardScene = scene
+        view.ignoresSiblingOrder = false
         view.preferredFramesPerSecond = 60
         view.allowsTransparency = false
         view.presentScene(scene)
@@ -112,6 +146,9 @@ struct SpriteKitBoardRepresentable: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: SKView, context: Context) {
+        if let gameView = uiView as? GameSKView {
+            gameView.boardScene = scene
+        }
         if uiView.scene !== scene {
             uiView.presentScene(scene)
         }
@@ -129,145 +166,143 @@ struct GameContainerView: View {
     }
 
     var body: some View {
-        GeometryReader { geo in
-            let safeTop = max(geo.safeAreaInsets.top, 12)
-            let safeBot = max(geo.safeAreaInsets.bottom, 12)
-            let aspect = geo.size.height / max(1, geo.size.width)
-            let skScene = coordinator.makeScene(aspect: aspect)
+        let skScene = coordinator.makeScene()
 
-            ZStack {
-                SpriteKitBoardRepresentable(scene: skScene)
-                    .ignoresSafeArea()
+        ZStack {
+            SpriteKitBoardRepresentable(scene: skScene)
+                .ignoresSafeArea()
 
-                VStack {
-                    // Header Bar
-                    HStack(spacing: 10) {
-                        Button {
-                            coordinator.scene?.handleUndo()
-                        } label: {
-                            ZStack(alignment: .topTrailing) {
-                                Image(systemName: "arrow.uturn.backward")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .frame(width: 44, height: 44)
-                                    .background(Color(UIColor(hex: 0x3B8EFF)))
-                                    .clipShape(Circle())
-                                    .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
-
-                                Text("\(coordinator.undoRemaining)")
-                                    .font(.system(size: 11, weight: .black, design: .rounded))
-                                    .foregroundColor(.white)
-                                    .frame(width: 20, height: 20)
-                                    .background(Color(UIColor(hex: coordinator.undoRemaining > 0 ? 0xF53B45 : 0x7B889E)))
-                                    .clipShape(Circle())
-                                    .overlay(Circle().stroke(Color.white, lineWidth: 1.5))
-                                    .offset(x: 4, y: -4)
-                            }
-                        }
-                        .opacity(coordinator.canUndo ? 1.0 : 0.62)
-
-                        Button {
-                            SoundEngine.shared.playTap()
-                            coordinator.restart(with: coordinator.level)
-                        } label: {
-                            Image(systemName: "arrow.clockwise")
-                                .font(.system(size: 17, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 40, height: 40)
-                                .background(Color(UIColor(hex: 0x4CA6FF)))
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
-                        }
-
-                        Spacer()
-
-                        VStack(spacing: 1) {
-                            Text(coordinator.level.isEvent == true ? (coordinator.level.eventName ?? "Maple Event") : "Level \(coordinator.level.id)")
-                                .font(.system(size: coordinator.level.isEvent == true ? 18 : 24, weight: .black, design: .rounded))
-                                .foregroundColor(.white)
-                                .shadow(color: Color(UIColor(hex: 0x2C4166)), radius: 0, x: 0, y: 2)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            if coordinator.level.isEvent != true && coordinator.level.id > 25 {
-                                Text("∞ Endless Mode")
-                                    .font(.system(size: 11.5, weight: .heavy, design: .rounded))
-                                    .foregroundColor(Color(UIColor(hex: 0x2E5EA8)))
-                            }
-                        }
-
-                        Spacer()
-
-                        Button {
-                            SoundEngine.shared.playTap()
-                            coordinator.scene?.setPausedByModal(true)
-                            coordinator.showPauseModal = true
-                        } label: {
-                            Image(systemName: "pause.fill")
-                                .font(.system(size: 17, weight: .bold))
+            VStack {
+                // Header Bar
+                HStack(spacing: 10) {
+                    Button {
+                        coordinator.scene?.handleUndo()
+                    } label: {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: "arrow.uturn.backward")
+                                .font(.system(size: 18, weight: .bold))
                                 .foregroundColor(.white)
                                 .frame(width: 44, height: 44)
                                 .background(Color(UIColor(hex: 0x3B8EFF)))
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
+
+                            Text("\(coordinator.undoRemaining)")
+                                .font(.system(size: 11, weight: .black, design: .rounded))
+                                .foregroundColor(.white)
+                                .frame(width: 20, height: 20)
+                                .background(Color(UIColor(hex: coordinator.undoRemaining > 0 ? 0xF53B45 : 0x7B889E)))
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white, lineWidth: 1.5))
+                                .offset(x: 4, y: -4)
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, safeTop + 4)
+                    .opacity(coordinator.canUndo ? 1.0 : 0.62)
+                    .accessibilityIdentifier("game_undo_button")
 
-                    if let toast = coordinator.toastMessage {
-                        Text(toast)
-                            .font(.system(size: 14.5, weight: .bold, design: .rounded))
+                    Button {
+                        SoundEngine.shared.playTap()
+                        coordinator.restart(with: coordinator.level)
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 17, weight: .bold))
                             .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color(UIColor(hex: 0x25314A, alpha: 0.88)))
-                            .clipShape(Capsule())
-                            .transition(.opacity.combined(with: .move(edge: .top)))
-                            .padding(.top, 6)
+                            .frame(width: 40, height: 40)
+                            .background(Color(UIColor(hex: 0x4CA6FF)))
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
+                    }
+                    .accessibilityIdentifier("game_restart_button")
+
+                    Spacer()
+
+                    VStack(spacing: 1) {
+                        Text(coordinator.level.isEvent == true ? (coordinator.level.eventName ?? "Maple Event") : "Level \(coordinator.level.id)")
+                            .font(.system(size: coordinator.level.isEvent == true ? 18 : 24, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                            .shadow(color: Color(UIColor(hex: 0x2C4166)), radius: 0, x: 0, y: 2)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                        if coordinator.level.isEvent != true && coordinator.level.id > 25 {
+                            Text("∞ Endless Mode")
+                                .font(.system(size: 11.5, weight: .heavy, design: .rounded))
+                                .foregroundColor(Color(UIColor(hex: 0x2E5EA8)))
+                        }
                     }
 
                     Spacer()
 
-                    if coordinator.showTutorialHint, let hint = coordinator.level.tutorialHint {
-                        Text(hint)
-                            .font(.system(size: 13.5, weight: .bold, design: .rounded))
-                            .foregroundColor(Color(UIColor(hex: 0x2B3E5E)))
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background(Color.white.opacity(0.95))
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color(UIColor(hex: 0x3B8EFF)), lineWidth: 2.5))
-                            .padding(.horizontal, 24)
-                            .padding(.bottom, 6)
+                    Button {
+                        SoundEngine.shared.playTap()
+                        coordinator.scene?.setPausedByModal(true)
+                        coordinator.showPauseModal = true
+                    } label: {
+                        Image(systemName: "pause.fill")
+                            .font(.system(size: 17, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                            .background(Color(UIColor(hex: 0x3B8EFF)))
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
                     }
+                    .accessibilityIdentifier("game_pause_button")
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 4)
 
-                    // Bottom 3 Booster Dock
-                    HStack(spacing: 12) {
-                        boosterButton(.vip, icon: "🎟️", label: "VIP")
-                        boosterButton(.arrange, icon: "🔀", label: "Arrange")
-                        boosterButton(.jumble, icon: "🎨", label: "Jumble")
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
-                    .background(Color.white.opacity(0.45))
-                    .clipShape(RoundedRectangle(cornerRadius: 22))
-                    .padding(.horizontal, 14)
-                    .padding(.bottom, safeBot + 4)
+                if let toast = coordinator.toastMessage {
+                    Text(toast)
+                        .font(.system(size: 14.5, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color(UIColor(hex: 0x25314A, alpha: 0.88)))
+                        .clipShape(Capsule())
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                        .padding(.top, 4)
                 }
 
-                // Modals
-                if let win = coordinator.winResult {
-                    winModal(stars: win.stars, coins: win.coins, hasNext: win.hasNext)
-                } else if let lose = coordinator.loseOutcome {
-                    loseModal(outcome: lose)
-                } else if coordinator.showPauseModal {
-                    pauseModal
-                } else if let bType = coordinator.getBoosterType {
-                    getBoosterModal(bType)
-                } else if let slotIdx = coordinator.unlockSlotIndex {
-                    unlockSlotModal(slotIdx)
+                Spacer()
+
+                if coordinator.showTutorialHint, let hint = coordinator.level.tutorialHint {
+                    Text(hint)
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundColor(Color(UIColor(hex: 0x2B3E5E)))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .background(Color.white.opacity(0.95))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color(UIColor(hex: 0x3B8EFF)), lineWidth: 2.5))
+                        .padding(.horizontal, 22)
+                        .padding(.bottom, 4)
                 }
+
+                // Bottom 3 Booster Dock
+                HStack(spacing: 12) {
+                    boosterButton(.vip, icon: "🎟️", label: "VIP")
+                    boosterButton(.arrange, icon: "🔀", label: "Arrange")
+                    boosterButton(.jumble, icon: "🎨", label: "Jumble")
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Color.white.opacity(0.45))
+                .clipShape(RoundedRectangle(cornerRadius: 22))
+                .padding(.horizontal, 14)
+                .padding(.bottom, 6)
+            }
+
+            // Modals
+            if let win = coordinator.winResult {
+                winModal(stars: win.stars, coins: win.coins, hasNext: win.hasNext)
+            } else if let lose = coordinator.loseOutcome {
+                loseModal(outcome: lose)
+            } else if coordinator.showPauseModal {
+                pauseModal
+            } else if let bType = coordinator.getBoosterType {
+                getBoosterModal(bType)
+            } else if let slotIdx = coordinator.unlockSlotIndex {
+                unlockSlotModal(slotIdx)
             }
         }
     }

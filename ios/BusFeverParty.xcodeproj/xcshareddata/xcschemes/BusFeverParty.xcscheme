@@ -39,6 +39,16 @@
                ReferencedContainer = "container:BusFeverParty.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DD0000030000000000000001"
+               BuildableName = "BusFeverPartyUITests.xctest"
+               BlueprintName = "BusFeverPartyUITests"
+               ReferencedContainer = "container:BusFeverParty.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

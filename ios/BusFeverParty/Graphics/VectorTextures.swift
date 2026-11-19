@@ -6,6 +6,7 @@ final class VectorTextures {
     static let shared = VectorTextures()
 
     private var busCache: [BusColor: SKTexture] = [:]
+    private var busImageCache: [BusColor: UIImage] = [:]
     private var passengerCache: [BusColor: SKTexture] = [:]
     private(set) lazy var mysteryBus: SKTexture = makeMysteryBusTexture()
     private(set) lazy var woodCrate: SKTexture = makeObstacleTexture()
@@ -16,9 +17,17 @@ final class VectorTextures {
 
     private init() {}
 
+    func busUIImage(for color: BusColor) -> UIImage {
+        if let hit = busImageCache[color] { return hit }
+        let img = makeBusImage(style: color.style)
+        busImageCache[color] = img
+        return img
+    }
+
     func busTexture(for color: BusColor) -> SKTexture {
         if let hit = busCache[color] { return hit }
-        let tex = makeBusTexture(style: color.style)
+        let tex = SKTexture(image: busUIImage(for: color))
+        tex.filteringMode = .linear
         busCache[color] = tex
         return tex
     }
@@ -30,14 +39,18 @@ final class VectorTextures {
         return tex
     }
 
-    private func renderTexture(size: CGSize, draw: (CGContext) -> Void) -> SKTexture {
+    private func renderUIImage(size: CGSize, draw: (CGContext) -> Void) -> UIImage {
         let fmt = UIGraphicsImageRendererFormat()
         fmt.scale = 3.0
         fmt.opaque = false
         let renderer = UIGraphicsImageRenderer(size: size, format: fmt)
-        let img = renderer.image { ctx in
+        return renderer.image { ctx in
             draw(ctx.cgContext)
         }
+    }
+
+    private func renderTexture(size: CGSize, draw: (CGContext) -> Void) -> SKTexture {
+        let img = renderUIImage(size: size, draw: draw)
         let tex = SKTexture(image: img)
         tex.filteringMode = .linear
         return tex
@@ -58,8 +71,8 @@ final class VectorTextures {
         cg.strokePath()
     }
 
-    private func makeBusTexture(style: BusColor.Style) -> SKTexture {
-        renderTexture(size: CGSize(width: 136, height: 88)) { cg in
+    private func makeBusImage(style: BusColor.Style) -> UIImage {
+        renderUIImage(size: CGSize(width: 136, height: 88)) { cg in
             // Drop shadow
             fillRoundedRect(cg, rect: CGRect(x: 8, y: 20, width: 120, height: 64), radius: 16, color: UIColor(white: 0, alpha: 0.16))
 

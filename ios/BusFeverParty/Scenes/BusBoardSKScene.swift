@@ -15,18 +15,23 @@ struct LayoutMetrics {
     let boardBottom: CGFloat
     let boardCenterY: CGFloat
 
-    init(aspectHeightOverWidth aspect: CGFloat) {
+    init(screenSize: CGSize, safeTopPts: CGFloat, safeBotPts: CGFloat) {
+        let screenW = max(320, min(screenSize.width, screenSize.height))
+        let screenH = max(screenW, max(screenSize.width, screenSize.height))
+        let aspect = screenH / screenW
         let h = max(860, min(1320, round(540 * aspect)))
-        let tall = h >= 1040
-        let sTop: CGFloat = tall ? 42 : 12
-        let sBot: CGFloat = tall ? 26 : 10
-        let extra = max(0, h - 960)
-        let tOff = sTop + round(extra * 0.14)
-        let sTopY = 320 + tOff
+        let logicalPerPt = 540.0 / screenW
+        let tall = aspect >= 1.92
+        let sTop = max(12, safeTopPts * logicalPerPt)
+        let sBot = max(10, safeBotPts * logicalPerPt)
+        let topReserve = round((safeTopPts + (tall ? 58 : 52)) * logicalPerPt)
+        let botReserve = round((safeBotPts + (tall ? 128 : 112)) * logicalPerPt)
+        let tOff = max(54, topReserve - 44)
+        let sTopY = 322 + tOff
         let sBotY = sTopY + 108
-        let dockTop = h - sBot - 92
+        let dockTop = h - botReserve
         let bTop = sBotY + 8
-        let bBot = dockTop - 10
+        let bBot = max(bTop + 240, dockTop - 8)
 
         self.height = h
         self.safeTop = sTop
@@ -119,24 +124,56 @@ final class BusBoardSKScene: SKScene {
     private var noMatchElapsed: TimeInterval = 0
     private var status: GameStatus = .playing
 
-    private let maxVisiblePassengers = 42
+    private let maxVisiblePassengers = 68
     private let boardingInterval: TimeInterval = 0.075
-    private let slotAngleDeg: CGFloat = -76
+    private let slotAngleDeg: CGFloat = -12
 
-    init(level: LevelConfig, aspect: CGFloat) {
+    private var slotTiltedRadians: CGFloat { -slotAngleDeg * .pi / 180.0 }
+    private var parkedBusRotationRadians: CGFloat { slotTiltedRadians + .pi * 0.5 }
+    private var appliedScreenSize: CGSize
+    private var appliedSafeTopPts: CGFloat
+    private var appliedSafeBotPts: CGFloat
+
+    init(level: LevelConfig, screenSize: CGSize, safeTopPts: CGFloat, safeBotPts: CGFloat) {
         self.engine = GameEngine(level: level)
-        self.layout = LayoutMetrics(aspectHeightOverWidth: aspect)
+        self.appliedScreenSize = screenSize
+        self.appliedSafeTopPts = safeTopPts
+        self.appliedSafeBotPts = safeBotPts
+        self.layout = LayoutMetrics(screenSize: screenSize, safeTopPts: safeTopPts, safeBotPts: safeBotPts)
         super.init(size: CGSize(width: 540, height: layout.height))
-        self.scaleMode = .aspectFill
+        self.scaleMode = .aspectFit
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) { nil }
 
     override func didMove(to view: SKView) {
-        view.ignoresSiblingOrder = true
+        view.ignoresSiblingOrder = false
         backgroundColor = UIColor(hex: 0xC5D6EC)
         setupScene()
+    }
+
+    func syncViewportMetricsIfNeeded(screenSize: CGSize, safeTopPts: CGFloat, safeBotPts: CGFloat) {
+        guard screenSize.width > 100, screenSize.height > 100 else { return }
+        let dw = abs(screenSize.width - appliedScreenSize.width)
+        let dh = abs(screenSize.height - appliedScreenSize.height)
+        let dt = abs(safeTopPts - appliedSafeTopPts)
+        let db = abs(safeBotPts - appliedSafeBotPts)
+        guard dw > 1 || dh > 1 || dt > 1 || db > 1 else { return }
+
+        appliedScreenSize = screenSize
+        appliedSafeTopPts = safeTopPts
+        appliedSafeBotPts = safeBotPts
+        layout = LayoutMetrics(screenSize: screenSize, safeTopPts: safeTopPts, safeBotPts: safeBotPts)
+        self.size = CGSize(width: 540, height: layout.height)
+        if view != nil {
+            worldLayer.removeAllChildren()
+            slotNodes.removeAll()
+            track = TrackGeometry(shape: engine.level.trackShape, offsetY: layout.trackOffsetY)
+            drawThemeAndTrack()
+            createParkingStrip()
+            rebuildVisualsFromEngine()
+        }
     }
 
     func setPausedByModal(_ paused: Bool) {
@@ -378,7 +415,7 @@ final class BusBoardSKScene: SKScene {
     private func refreshSlotVisuals() {
         let w: CGFloat = 44
         let h: CGFloat = 68
-        let rad = -slotAngleDeg * .pi / 180.0
+        let rad = slotTiltedRadians
 
         for i in 0..<slotNodes.count {
             guard let slot = engine.parkingLot.getSlot(i) else { continue }
@@ -391,6 +428,7 @@ final class BusBoardSKScene: SKScene {
                 box.strokeColor = slot.unlocked ? UIColor(hex: 0xFFDF6B) : UIColor(hex: 0xFFBE2E)
                 box.lineWidth = 2.5
                 box.zRotation = rad
+                box.zPosition = 0
                 node.addChild(box)
 
                 let lbl = SKLabelNode(text: "VIP")
@@ -399,6 +437,7 @@ final class BusBoardSKScene: SKScene {
                 lbl.fontColor = UIColor(hex: 0xFFD24D)
                 lbl.verticalAlignmentMode = .center
                 lbl.zRotation = rad + .pi * 0.5
+                lbl.zPosition = 1
                 node.addChild(lbl)
                 continue
             }
@@ -409,18 +448,21 @@ final class BusBoardSKScene: SKScene {
                 box.strokeColor = UIColor(hex: 0xCBD6EB, alpha: 0.75)
                 box.lineWidth = 2.2
                 box.zRotation = rad
+                box.zPosition = 0
                 node.addChild(box)
             } else {
                 box.fillColor = UIColor(hex: 0x475063, alpha: 0.55)
                 box.strokeColor = UIColor(hex: 0xA8B7D1, alpha: 0.55)
                 box.lineWidth = 2.0
                 box.zRotation = rad
+                box.zPosition = 0
                 node.addChild(box)
 
                 let circle = SKShapeNode(circleOfRadius: 14)
                 circle.fillColor = UIColor(hex: 0x34D349)
                 circle.strokeColor = .white
                 circle.lineWidth = 2
+                circle.zPosition = 1
                 circle.name = "slot:\(i)"
                 let plus = SKLabelNode(text: "+")
                 plus.fontName = "AvenirNext-Bold"
@@ -428,6 +470,7 @@ final class BusBoardSKScene: SKScene {
                 plus.fontColor = .white
                 plus.verticalAlignmentMode = .center
                 plus.position = CGPoint(x: 0, y: 1)
+                plus.zPosition = 2
                 plus.name = "slot:\(i)"
                 node.addChild(circle)
                 node.addChild(plus)
@@ -464,9 +507,11 @@ final class BusBoardSKScene: SKScene {
         pill.fillColor = .white
         pill.strokeColor = UIColor(hex: 0x3B4863)
         pill.lineWidth = 2
+        pill.zPosition = 0
         let icon = SKLabelNode(text: "⏳")
         icon.fontSize = 14
         icon.verticalAlignmentMode = .center
+        icon.zPosition = 1
         waitingBubble.addChild(pill)
         waitingBubble.addChild(icon)
         fxLayer.addChild(waitingBubble)
@@ -523,6 +568,7 @@ final class BusBoardSKScene: SKScene {
                 dot.fillColor = UIColor(hex: 0x9FB3D1, alpha: 0.4)
                 dot.strokeColor = .clear
                 dot.position = skPt(pt.x, pt.y)
+                dot.zPosition = 0
                 boardLayer.addChild(dot)
             }
         }
@@ -534,6 +580,7 @@ final class BusBoardSKScene: SKScene {
             let sprite = SKSpriteNode(texture: VectorTextures.shared.woodCrate, size: CGSize(width: w, height: h))
             sprite.position = skPt(pt.x, pt.y)
             sprite.zRotation = -CGFloat((obs.angle ?? 0) * .pi / 180.0)
+            sprite.zPosition = 2
             boardLayer.addChild(sprite)
         }
 
@@ -549,16 +596,19 @@ final class BusBoardSKScene: SKScene {
 
         let bodyTex = bus.unlocked ? VectorTextures.shared.busTexture(for: bus.color) : VectorTextures.shared.mysteryBus
         let body = SKSpriteNode(texture: bodyTex, size: CGSize(width: lenPx * 1.08, height: widPx * 1.15))
+        body.zPosition = 0
         body.name = "bus:\(bus.id)"
 
         let arrow = SKSpriteNode(texture: VectorTextures.shared.arrowWhite, size: CGSize(width: 48 * (cellSize / 76) * 0.56, height: 34 * (cellSize / 76) * 0.56))
         arrow.position = CGPoint(x: -4, y: 0)
+        arrow.zPosition = 1
         arrow.isHidden = !bus.unlocked
         arrow.name = "bus:\(bus.id)"
 
         let node = BoardBusNode(busId: bus.id, body: body, arrow: arrow)
         node.position = skPt(logical.x, logical.y)
         node.zRotation = bus.direction.spriteKitRadians
+        node.zPosition = 5
         node.addChild(body)
         node.addChild(arrow)
 
@@ -568,6 +618,7 @@ final class BusBoardSKScene: SKScene {
             dot.strokeColor = .white
             dot.lineWidth = 2.2
             dot.zRotation = -node.zRotation
+            dot.zPosition = 2
             dot.name = "bus:\(bus.id)"
 
             let lbl = SKLabelNode(text: "\(bus.mysteryRemaining)")
@@ -576,6 +627,7 @@ final class BusBoardSKScene: SKScene {
             lbl.fontColor = .white
             lbl.verticalAlignmentMode = .center
             lbl.zRotation = -node.zRotation
+            lbl.zPosition = 3
             lbl.name = "bus:\(bus.id)"
 
             node.mysteryDot = dot
@@ -727,7 +779,7 @@ final class BusBoardSKScene: SKScene {
 
         let driveOut = SKAction.move(to: stepOut, duration: 0.14)
         driveOut.timingMode = .easeIn
-        let targetRot = -slotAngleDeg * .pi / 180.0
+        let targetRot = parkedBusRotationRadians
         let intoSlot = SKAction.group([
             SKAction.move(to: slotPt, duration: 0.28),
             SKAction.rotate(toAngle: targetRot, duration: 0.24, shortestUnitArc: true)
@@ -740,6 +792,7 @@ final class BusBoardSKScene: SKScene {
                 b.state = .parked
                 self.engine.busSystem.updateBus(b)
             }
+            parked.capBg.position = CGPoint(x: -24, y: 0)
             parked.capBg.zRotation = -targetRot
             parked.capBg.isHidden = false
             self.evaluateDeadlockState()
@@ -748,11 +801,13 @@ final class BusBoardSKScene: SKScene {
 
     private func createParkedBusNode(bus: BusRuntime, at pos: CGPoint, rotation: CGFloat, parkedImmediately: Bool = false) -> ParkedBusNode {
         let body = SKSpriteNode(texture: VectorTextures.shared.busTexture(for: bus.color), size: CGSize(width: 66, height: 36))
-        let capBg = SKShapeNode(rectOf: CGSize(width: 26, height: 18), cornerRadius: 7)
+        body.zPosition = 0
+        let capBg = SKShapeNode(rectOf: CGSize(width: 28, height: 18), cornerRadius: 7)
         capBg.fillColor = bus.color.style.dark
         capBg.strokeColor = .white
         capBg.lineWidth = 2
-        capBg.position = CGPoint(x: 0, y: 0)
+        capBg.position = CGPoint(x: -24, y: 0)
+        capBg.zPosition = 2
         capBg.isHidden = !parkedImmediately
 
         let remaining = max(0, bus.capacity - bus.boarded)
@@ -761,6 +816,7 @@ final class BusBoardSKScene: SKScene {
         capLbl.fontSize = 12
         capLbl.fontColor = .white
         capLbl.verticalAlignmentMode = .center
+        capLbl.zPosition = 1
         capBg.addChild(capLbl)
 
         let node = ParkedBusNode(busId: bus.id, body: body, capBg: capBg, capLabel: capLbl)
@@ -1046,7 +1102,7 @@ final class BusBoardSKScene: SKScene {
             }
             if bus.state == .parked, let slotIdx = bus.slotIndex {
                 let pt = skPt(CGFloat(54 + slotIdx * 72), layout.slotY)
-                let rad = -slotAngleDeg * .pi / 180.0
+                let rad = parkedBusRotationRadians
                 let parked = createParkedBusNode(bus: bus, at: pt, rotation: rad, parkedImmediately: true)
                 parked.capBg.zRotation = -rad
                 parkedLayer.addChild(parked)

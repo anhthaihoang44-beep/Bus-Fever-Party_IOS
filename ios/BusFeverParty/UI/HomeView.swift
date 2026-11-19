@@ -8,7 +8,7 @@ struct HomeView: View {
     @State private var levelPage: Int = 0
     @State private var floatLogo = false
     @State private var pulsePlay = false
-    @State private var busRoll = false
+    @State private var busRollOffset: CGFloat = -220
 
     enum HomeModalKind: Identifiable {
         case levels, missions, leaders, settings
@@ -27,196 +27,202 @@ struct HomeView: View {
     ]
 
     var body: some View {
-        GeometryReader { geo in
-            let safeTop = max(geo.safeAreaInsets.top, 16)
-            let safeBot = max(geo.safeAreaInsets.bottom, 16)
-            let targetLevel = save.data.currentLevel
+        let targetLevel = save.data.currentLevel
+        let screenW = UIScreen.main.bounds.width
 
-            ZStack {
-                VStack(spacing: 0) {
-                    Color(UIColor(hex: 0x62B6FF))
-                    Color(UIColor(hex: 0xA6D8FF))
-                }
-                .ignoresSafeArea()
+        ZStack {
+            // Full-bleed sky & road background
+            VStack(spacing: 0) {
+                Color(UIColor(hex: 0x62B6FF))
+                Color(UIColor(hex: 0xA6D8FF))
+            }
+            .ignoresSafeArea()
 
-                // Ambient clouds
+            VStack {
                 HStack {
-                    cloudCluster.offset(x: -10, y: -geo.size.height * 0.22)
+                    cloudCluster
+                        .offset(x: -16, y: 80)
                     Spacer()
-                    cloudCluster.offset(x: 15, y: -geo.size.height * 0.14)
+                    cloudCluster
+                        .offset(x: 16, y: 120)
                 }
+                Spacer()
+                scenicRoadBackdrop(width: screenW)
+            }
+            .ignoresSafeArea()
 
-                // Bottom scenic hills, road & bottom nav
-                VStack {
+            // Safe-area-respecting interactive foreground
+            VStack(spacing: 12) {
+                // Top Bar: Coins + Settings
+                HStack {
+                    HStack(spacing: 7) {
+                        Text("🪙")
+                        Text("\(save.data.coins)")
+                            .font(.system(size: 17, weight: .heavy, design: .rounded))
+                            .foregroundColor(Color(UIColor(hex: 0x5C3A00)))
+                    }
+                    .padding(.horizontal, 15)
+                    .padding(.vertical, 8)
+                    .background(Color.white.opacity(0.95))
+                    .clipShape(Capsule())
+                    .overlay(Capsule().stroke(Color(UIColor(hex: 0xFFC814)), lineWidth: 2.5))
+
                     Spacer()
-                    scenicRoadFooter(width: geo.size.width)
-                        .padding(.bottom, 76 + safeBot)
-                }
-                .ignoresSafeArea(edges: .bottom)
 
-                VStack(spacing: 14) {
-                    // Top Bar: Coins + Settings
-                    HStack {
-                        HStack(spacing: 7) {
-                            Text("🪙")
-                            Text("\(save.data.coins)")
-                                .font(.system(size: 18, weight: .heavy, design: .rounded))
-                                .foregroundColor(Color(UIColor(hex: 0x5C3A00)))
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.white.opacity(0.95))
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(Color(UIColor(hex: 0xFFC814)), lineWidth: 2.5))
-
-                        Spacer()
-
-                        Button {
-                            SoundEngine.shared.playTap()
-                            activeSheet = .settings
-                        } label: {
-                            Image(systemName: "gearshape.fill")
-                                .font(.system(size: 19, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 44, height: 44)
-                                .background(Color(UIColor(hex: 0x3B8EFF)))
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, safeTop + 6)
-
-                    // Title Logo Badge
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(Color(UIColor(hex: 0x1E4FA8)))
-                            .frame(width: 310, height: 102)
-                            .offset(y: 5)
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(Color(UIColor(hex: 0x388EFF)))
-                            .frame(width: 310, height: 100)
-                            .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white, lineWidth: 3.5))
-
-                        VStack(spacing: 4) {
-                            Text("BUS FEVER")
-                                .font(.system(size: 36, weight: .black, design: .rounded))
-                                .foregroundColor(Color(UIColor(hex: 0xFFE047)))
-                                .shadow(color: Color(UIColor(hex: 0x163570)), radius: 0, x: 0, y: 2.5)
-                            Text("PARTY PASSENGER LOOP")
-                                .font(.system(size: 15, weight: .heavy, design: .rounded))
-                                .foregroundColor(.white)
-                        }
-                    }
-                    .offset(y: floatLogo ? -5 : 0)
-
-                    // Seasonal Event Banner
-                    seasonalCard
-
-                    Spacer(minLength: 6)
-
-                    // Milestone / Endless Roadmap Card
-                    milestoneCard(targetLevel: targetLevel)
-
-                    // Primary PLAY CTA
                     Button {
                         SoundEngine.shared.playTap()
-                        onPlayLevel(targetLevel, false)
+                        activeSheet = .settings
                     } label: {
-                        ZStack {
-                            Capsule()
-                                .fill(Color(UIColor(hex: 0x158C24)))
-                                .frame(width: 278, height: 68)
-                                .offset(y: 4)
-                            Capsule()
-                                .fill(Color(UIColor(hex: 0x34D349)))
-                                .frame(width: 278, height: 66)
-                                .overlay(Capsule().stroke(Color.white, lineWidth: 3))
-                            Text("PLAY  LEVEL \(targetLevel)")
-                                .font(.system(size: 22, weight: .black, design: .rounded))
-                                .foregroundColor(.white)
-                        }
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(width: 42, height: 42)
+                            .background(Color(UIColor(hex: 0x3B8EFF)))
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white, lineWidth: 2.5))
                     }
-                    .scaleEffect(pulsePlay ? 1.03 : 1.0)
-                    .padding(.top, 4)
+                    .accessibilityIdentifier("home_settings_button")
+                }
+                .padding(.horizontal, 18)
+                .padding(.top, 6)
 
-                    Spacer(minLength: 10)
+                // Title Logo Badge
+                ZStack {
+                    RoundedRectangle(cornerRadius: 22)
+                        .fill(Color(UIColor(hex: 0x1E4FA8)))
+                        .frame(maxWidth: 300)
+                        .frame(height: 92)
+                        .offset(y: 5)
+                    RoundedRectangle(cornerRadius: 22)
+                        .fill(Color(UIColor(hex: 0x388EFF)))
+                        .frame(maxWidth: 300)
+                        .frame(height: 90)
+                        .overlay(RoundedRectangle(cornerRadius: 22).stroke(Color.white, lineWidth: 3.5))
 
-                    // Bottom 3-tab Nav
-                    HStack(spacing: 12) {
-                        navButton(title: "Levels", icon: "🗺️", topColor: 0x3B8EFF, botColor: 0x1A5FC2) {
-                            levelPage = max(0, (save.data.currentLevel - 1) / 20)
-                            activeSheet = .levels
-                        }
-                        navButton(title: "Missions", icon: "🎯", topColor: 0x9B51E0, botColor: 0x6724AB) {
-                            activeSheet = .missions
-                        }
-                        navButton(title: "Leaders", icon: "🏆", topColor: 0xFF8A1F, botColor: 0xC75600) {
-                            activeSheet = .leaders
-                        }
+                    VStack(spacing: 3) {
+                        Text("BUS FEVER")
+                            .font(.system(size: 34, weight: .black, design: .rounded))
+                            .foregroundColor(Color(UIColor(hex: 0xFFE047)))
+                            .shadow(color: Color(UIColor(hex: 0x163570)), radius: 0, x: 0, y: 2.5)
+                        Text("PARTY PASSENGER LOOP")
+                            .font(.system(size: 14, weight: .heavy, design: .rounded))
+                            .foregroundColor(.white)
                     }
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, safeBot + 8)
                 }
+                .offset(y: floatLogo ? -4 : 0)
 
-                if let modal = activeSheet {
-                    modalOverlay(modal)
+                // Seasonal Event Banner
+                seasonalCard
+
+                Spacer(minLength: 6)
+
+                // Milestone / Endless Roadmap Card
+                milestoneCard(targetLevel: targetLevel)
+
+                // Primary PLAY CTA
+                Button {
+                    SoundEngine.shared.playTap()
+                    onPlayLevel(targetLevel, false)
+                } label: {
+                    ZStack {
+                        Capsule()
+                            .fill(Color(UIColor(hex: 0x158C24)))
+                            .frame(width: 268, height: 64)
+                            .offset(y: 4)
+                        Capsule()
+                            .fill(Color(UIColor(hex: 0x34D349)))
+                            .frame(width: 268, height: 62)
+                            .overlay(Capsule().stroke(Color.white, lineWidth: 3))
+                        Text("PLAY  LEVEL \(targetLevel)")
+                            .font(.system(size: 21, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                    }
                 }
+                .scaleEffect(pulsePlay ? 1.03 : 1.0)
+                .padding(.top, 2)
+                .accessibilityIdentifier("home_play_button")
+
+                Spacer(minLength: 42)
+
+                // Bottom 3-tab Nav
+                HStack(spacing: 12) {
+                    navButton(title: "Levels", icon: "🗺️", topColor: 0x3B8EFF, botColor: 0x1A5FC2) {
+                        levelPage = max(0, (save.data.currentLevel - 1) / 20)
+                        activeSheet = .levels
+                    }
+                    .accessibilityIdentifier("home_levels_button")
+                    navButton(title: "Missions", icon: "🎯", topColor: 0x9B51E0, botColor: 0x6724AB) {
+                        activeSheet = .missions
+                    }
+                    .accessibilityIdentifier("home_missions_button")
+                    navButton(title: "Leaders", icon: "🏆", topColor: 0xFF8A1F, botColor: 0xC75600) {
+                        activeSheet = .leaders
+                    }
+                    .accessibilityIdentifier("home_leaders_button")
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
             }
-            .onAppear {
-                withAnimation(.easeInOut(duration: 1.7).repeatForever(autoreverses: true)) {
-                    floatLogo = true
-                }
-                withAnimation(.easeInOut(duration: 0.95).repeatForever(autoreverses: true)) {
-                    pulsePlay = true
-                }
-                withAnimation(.linear(duration: 6.5).repeatForever(autoreverses: false)) {
-                    busRoll = true
-                }
+
+            if let modal = activeSheet {
+                modalOverlay(modal)
+            }
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.7).repeatForever(autoreverses: true)) {
+                floatLogo = true
+            }
+            withAnimation(.easeInOut(duration: 0.95).repeatForever(autoreverses: true)) {
+                pulsePlay = true
+            }
+            let span = screenW * 0.5 + 260
+            busRollOffset = -span
+            withAnimation(.linear(duration: 7.5).repeatForever(autoreverses: false)) {
+                busRollOffset = span
             }
         }
     }
 
     private var cloudCluster: some View {
         ZStack {
-            Circle().fill(Color.white.opacity(0.65)).frame(width: 58, height: 58)
-            Circle().fill(Color.white.opacity(0.65)).frame(width: 44, height: 44).offset(x: 28, y: 6)
-            Circle().fill(Color.white.opacity(0.65)).frame(width: 40, height: 40).offset(x: -24, y: 8)
+            Circle().fill(Color.white.opacity(0.6)).frame(width: 56, height: 56)
+            Circle().fill(Color.white.opacity(0.6)).frame(width: 42, height: 42).offset(x: 26, y: 6)
+            Circle().fill(Color.white.opacity(0.6)).frame(width: 38, height: 38).offset(x: -22, y: 8)
         }
     }
 
     private var seasonalCard: some View {
         HStack(spacing: 10) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(save.data.stats.eventCompleted ? "🍁 SEASONAL EVENT • CLEARED ✓" : "🍁 SEASONAL EVENT")
-                    .font(.system(size: 11.5, weight: .bold, design: .rounded))
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundColor(Color(UIColor(hex: 0xFFF2BD)))
                 Text("Maple Bus Escape Challenge")
-                    .font(.system(size: 18, weight: .black, design: .rounded))
+                    .font(.system(size: 17, weight: .black, design: .rounded))
                     .foregroundColor(.white)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .minimumScaleFactor(0.78)
                 Text("Autumn maple loop • Bonus coins!")
-                    .font(.system(size: 12.5, weight: .semibold, design: .rounded))
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundColor(Color(UIColor(hex: 0xFFEBD1)))
             }
-            Spacer()
+            Spacer(minLength: 6)
             Button {
                 SoundEngine.shared.playTap()
                 onPlayLevel(101, true)
             } label: {
                 Text("Play Event")
-                    .font(.system(size: 14, weight: .heavy, design: .rounded))
+                    .font(.system(size: 13.5, weight: .heavy, design: .rounded))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 13)
+                    .padding(.vertical, 9)
                     .background(Color(UIColor(hex: 0x34D349)))
                     .clipShape(Capsule())
                     .overlay(Capsule().stroke(Color.white, lineWidth: 2))
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
         .background(
             LinearGradient(
                 colors: [Color(UIColor(hex: 0xFF8E36)), Color(UIColor(hex: 0xF26B26))],
@@ -224,9 +230,9 @@ struct HomeView: View {
                 endPoint: .bottom
             )
         )
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(UIColor(hex: 0xFFE49E)), lineWidth: 3))
-        .padding(.horizontal, 20)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color(UIColor(hex: 0xFFE49E)), lineWidth: 2.5))
+        .padding(.horizontal, 18)
     }
 
     private func milestoneCard(targetLevel: Int) -> some View {
@@ -241,9 +247,9 @@ struct HomeView: View {
         else if targetLevel <= 25 { hintText = "Endless Auto-Generated Levels unlock after Level 25!" }
         else { hintText = "Endless Level \(targetLevel) • Procedurally generated & verified!" }
 
-        return VStack(spacing: 10) {
+        return VStack(spacing: 9) {
             Text("\(badgeText)   •   ★ \(save.totalStars()) Stars")
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .font(.system(size: 11.5, weight: .bold, design: .rounded))
                 .foregroundColor(Color(UIColor(hex: 0x2E6CC4)))
 
             HStack(spacing: 0) {
@@ -254,7 +260,7 @@ struct HomeView: View {
                     ZStack {
                         Circle()
                             .fill(Color(UIColor(hex: isCurr ? 0x34D349 : (isDone ? 0x3B8EFF : 0x9AA8BF))))
-                            .frame(width: isCurr ? 42 : 34, height: isCurr ? 42 : 34)
+                            .frame(width: isCurr ? 40 : 32, height: isCurr ? 40 : 32)
                             .overlay(Circle().stroke(Color(UIColor(hex: isCurr ? 0xFFE047 : 0xFFFFFF)), lineWidth: 2.5))
                         Text("\(lv)")
                             .font(.system(size: isCurr ? 15 : 13, weight: .black, design: .rounded))
@@ -267,43 +273,46 @@ struct HomeView: View {
                     }
                 }
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 6)
 
             Text(hintText)
                 .font(.system(size: 12, weight: .bold, design: .rounded))
                 .foregroundColor(Color(UIColor(hex: 0x4C5F80)))
                 .multilineTextAlignment(.center)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
         .background(Color.white.opacity(0.94))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(UIColor(hex: 0x7CB8FF)), lineWidth: 2.5))
-        .padding(.horizontal, 20)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color(UIColor(hex: 0x7CB8FF)), lineWidth: 2.5))
+        .padding(.horizontal, 18)
     }
 
-    private func scenicRoadFooter(width: CGFloat) -> some View {
-        ZStack(alignment: .bottom) {
-            HStack(spacing: -40) {
-                Ellipse().fill(Color(UIColor(hex: 0x79D457))).frame(width: 220, height: 90)
-                Ellipse().fill(Color(UIColor(hex: 0x5DBB42))).frame(width: 240, height: 76)
+    private func scenicRoadBackdrop(width: CGFloat) -> some View {
+        ZStack(alignment: .top) {
+            VStack(spacing: 0) {
+                HStack(spacing: -30) {
+                    Ellipse().fill(Color(UIColor(hex: 0x79D457))).frame(width: width * 0.62, height: 64)
+                    Ellipse().fill(Color(UIColor(hex: 0x5DBB42))).frame(width: width * 0.62, height: 54)
+                }
+                .offset(y: 16)
+
+                Rectangle()
+                    .fill(Color(UIColor(hex: 0x4E596E)))
+                    .frame(width: width, height: 176)
             }
-            .offset(y: -26)
 
-            Rectangle()
-                .fill(Color(UIColor(hex: 0x4E596E)))
-                .frame(width: width, height: 50)
-
-            HStack(spacing: 46) {
+            HStack(spacing: 44) {
                 ForEach([BusColor.pink, .green, .blue, .yellow, .orange], id: \.self) { color in
-                    Image(uiImage: UIImage(cgImage: VectorTextures.shared.busTexture(for: color).cgImage()))
+                    Image(uiImage: VectorTextures.shared.busUIImage(for: color))
                         .resizable()
-                        .frame(width: 58, height: 38)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 56, height: 36)
                 }
             }
-            .offset(x: busRoll ? -width * 0.45 : width * 0.45, y: -12)
+            .offset(x: busRollOffset, y: 40)
         }
-        .frame(height: 92)
+        .frame(width: width, height: 214)
         .clipped()
     }
 
@@ -315,16 +324,16 @@ struct HomeView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(UIColor(hex: botColor)))
-                    .frame(height: 64)
+                    .frame(height: 60)
                     .offset(y: 4)
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(UIColor(hex: topColor)))
-                    .frame(height: 62)
+                    .frame(height: 58)
                     .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white, lineWidth: 2.5))
                 VStack(spacing: 2) {
-                    Text(icon).font(.system(size: 20))
+                    Text(icon).font(.system(size: 19))
                     Text(title)
-                        .font(.system(size: 13.5, weight: .heavy, design: .rounded))
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
                         .foregroundColor(.white)
                 }
             }
@@ -343,19 +352,22 @@ struct HomeView: View {
                     activeSheet = nil
                 }
 
-            VStack(spacing: 0) {
-                switch kind {
-                case .levels: levelsModalContent
-                case .missions: missionsModalContent
-                case .leaders: leadersModalContent
-                case .settings: settingsModalContent
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    switch kind {
+                    case .levels: levelsModalContent
+                    case .missions: missionsModalContent
+                    case .leaders: leadersModalContent
+                    case .settings: settingsModalContent
+                    }
                 }
+                .padding(18)
             }
-            .padding(20)
+            .frame(maxHeight: UIScreen.main.bounds.height * 0.72)
             .background(Color(UIColor(hex: 0xFFF9ED)))
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color(UIColor(hex: modalAccent(kind))), lineWidth: 4))
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 18)
         }
     }
 
@@ -371,9 +383,9 @@ struct HomeView: View {
     private func modalHeader(title: String, accent: UInt32) -> some View {
         HStack {
             Text(title)
-                .font(.system(size: 20, weight: .black, design: .rounded))
+                .font(.system(size: 19, weight: .black, design: .rounded))
                 .foregroundColor(.white)
-                .padding(.horizontal, 18)
+                .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(Color(UIColor(hex: accent)))
                 .clipShape(Capsule())
@@ -389,8 +401,9 @@ struct HomeView: View {
                     .background(Color(UIColor(hex: 0xE8EFFA)))
                     .clipShape(Circle())
             }
+            .accessibilityIdentifier("modal_close_button")
         }
-        .padding(.bottom, 14)
+        .padding(.bottom, 12)
     }
 
     private var levelsModalContent: some View {
@@ -420,7 +433,7 @@ struct HomeView: View {
                                 .font(.system(size: 10, weight: .bold, design: .rounded))
                                 .foregroundColor(Color(UIColor(hex: stars > 0 ? 0xFFE259 : 0xE2ECFF)))
                         }
-                        .frame(height: 56)
+                        .frame(height: 54)
                         .frame(maxWidth: .infinity)
                         .background(Color(UIColor(hex: unlocked ? 0x4CA6FF : 0x9AA8BF)))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -462,7 +475,7 @@ struct HomeView: View {
                         .clipShape(Capsule())
                 }
             }
-            .padding(.top, 6)
+            .padding(.top, 4)
         }
     }
 

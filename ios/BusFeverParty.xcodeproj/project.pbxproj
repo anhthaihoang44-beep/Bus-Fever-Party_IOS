@@ -27,10 +27,18 @@
 		AA0000190000000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB0000190000000000000001 /* LaunchScreen.storyboard */; };
 		AA0000200000000000000001 /* levels in Resources */ = {isa = PBXBuildFile; fileRef = BB0000200000000000000001 /* levels */; };
 		AA0000210000000000000001 /* BusFeverPartyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000210000000000000001 /* BusFeverPartyTests.swift */; };
+		AA0000220000000000000001 /* BusFeverPartyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000230000000000000001 /* BusFeverPartyUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		CC0000010000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE0000010000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD0000010000000000000001;
+			remoteInfo = BusFeverParty;
+		};
+		CC0000030000000000000001 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EE0000010000000000000001 /* Project object */;
 			proxyType = 1;
@@ -62,8 +70,10 @@
 		BB0000200000000000000001 /* levels */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources/levels; sourceTree = "<group>"; };
 		BB0000210000000000000001 /* BusFeverPartyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusFeverPartyTests.swift; sourceTree = "<group>"; };
 		BB0000220000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BB0000230000000000000001 /* BusFeverPartyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusFeverPartyUITests.swift; sourceTree = "<group>"; };
 		FF0000010000000000000001 /* BusFeverParty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BusFeverParty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF0000020000000000000001 /* BusFeverPartyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusFeverPartyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF0000030000000000000001 /* BusFeverPartyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusFeverPartyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +89,12 @@
 			files = ();
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		110000030000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -87,6 +103,7 @@
 			children = (
 				220000020000000000000001 /* BusFeverParty */,
 				220000030000000000000001 /* BusFeverPartyTests */,
+				220000050000000000000001 /* BusFeverPartyUITests */,
 				220000040000000000000001 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -127,11 +144,20 @@
 			path = BusFeverPartyTests;
 			sourceTree = "<group>";
 		};
+		220000050000000000000001 /* BusFeverPartyUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BB0000230000000000000001 /* BusFeverPartyUITests.swift */,
+			);
+			path = BusFeverPartyUITests;
+			sourceTree = "<group>";
+		};
 		220000040000000000000001 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				FF0000010000000000000001 /* BusFeverParty.app */,
 				FF0000020000000000000001 /* BusFeverPartyTests.xctest */,
+				FF0000030000000000000001 /* BusFeverPartyUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -171,6 +197,23 @@
 			productReference = FF0000020000000000000001 /* BusFeverPartyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		DD0000030000000000000001 /* BusFeverPartyUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 440000040000000000000001 /* Build configuration list for PBXNativeTarget "BusFeverPartyUITests" */;
+			buildPhases = (
+				330000030000000000000001 /* Sources */,
+				110000030000000000000001 /* Frameworks */,
+				550000030000000000000001 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = (
+				CC0000040000000000000001 /* PBXTargetDependency */,
+			);
+			name = BusFeverPartyUITests;
+			productName = BusFeverPartyUITests;
+			productReference = FF0000030000000000000001 /* BusFeverPartyUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -185,6 +228,10 @@
 						CreatedOnToolsVersion = 16.0;
 					};
 					DD0000020000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = DD0000010000000000000001;
+					};
+					DD0000030000000000000001 = {
 						CreatedOnToolsVersion = 16.0;
 						TestTargetID = DD0000010000000000000001;
 					};
@@ -205,6 +252,7 @@
 			targets = (
 				DD0000010000000000000001 /* BusFeverParty */,
 				DD0000020000000000000001 /* BusFeverPartyTests */,
+				DD0000030000000000000001 /* BusFeverPartyUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -221,6 +269,12 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		550000020000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		550000030000000000000001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = ();
@@ -261,6 +315,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		330000030000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000220000000000000001 /* BusFeverPartyUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -268,6 +330,11 @@
 			isa = PBXTargetDependency;
 			target = DD0000010000000000000001 /* BusFeverParty */;
 			targetProxy = CC0000010000000000000001 /* PBXContainerItemProxy */;
+		};
+		CC0000040000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD0000010000000000000001 /* BusFeverParty */;
+			targetProxy = CC0000030000000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -378,6 +445,36 @@
 			};
 			name = Release;
 		};
+		660000070000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.busfever.partyloopUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BusFeverParty;
+			};
+			name = Debug;
+		};
+		660000080000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.busfever.partyloopUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BusFeverParty;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -404,6 +501,15 @@
 			buildConfigurations = (
 				660000050000000000000001 /* Debug */,
 				660000060000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		440000040000000000000001 /* Build configuration list for PBXNativeTarget "BusFeverPartyUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				660000070000000000000001 /* Debug */,
+				660000080000000000000001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

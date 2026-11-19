@@ -28,15 +28,39 @@ jobs:
           xcodebuild -showsdks
           xcrun simctl list devices available
 
-      - name: Run Native Swift Unit Tests (BusFeverPartyTests)
+      - name: Run Native Swift Unit & UI Screenshot Tests
         run: |
-          DEST=$(xcrun simctl list devices available iPhone | grep -E '\([A-F0-9-]+\)' | head -n 1 | sed -E 's/.*\(([A-F0-9-]+)\).*/\1/')
+          DEST=$(xcrun simctl list devices available iPhone | grep -E 'iPhone 16|iPhone 15|iPhone 14' | grep -v 'SE' | grep -E '\([A-F0-9-]+\)' | head -n 1 | sed -E 's/.*\(([A-F0-9-]+)\).*/\1/')
+          if [ -z "$DEST" ]; then
+            DEST=$(xcrun simctl list devices available iPhone | grep -E '\([A-F0-9-]+\)' | head -n 1 | sed -E 's/.*\(([A-F0-9-]+)\).*/\1/')
+          fi
           echo "Using Simulator ID: $DEST"
+          xcrun simctl boot "$DEST" || true
+          xcrun simctl bootstatus "$DEST" -b
+          rm -rf ios/TestResults.xcresult ios_screenshots
           xcodebuild test \
             -project ios/BusFeverParty.xcodeproj \
             -scheme BusFeverParty \
             -destination "platform=iOS Simulator,id=$DEST" \
-            -derivedDataPath ios/DerivedDataSim
+            -derivedDataPath ios/DerivedDataSim \
+            -resultBundlePath ios/TestResults.xcresult
+          mkdir -p ios_screenshots
+          find "$HOME/Library/Developer/CoreSimulator/Devices/$DEST/data" -name "ios_sim_*.png" -exec cp -f {} ios_screenshots/ \; || true
+          if [ -z "$(ls -A ios_screenshots)" ]; then
+            find "$HOME/Library/Developer/CoreSimulator/Devices" -name "ios_sim_*.png" -exec cp -f {} ios_screenshots/ \; || true
+          fi
+          ls -lh ios_screenshots/
+          test -f ios_screenshots/ios_sim_01_home.png
+          test -f ios_screenshots/ios_sim_03_level1_start.png
+          test -f ios_screenshots/ios_sim_04_level1_parked.png
+
+      - name: Upload iOS Simulator UI Screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-sim-screenshots
+          path: ios_screenshots/*.png
+          retention-days: 30
 
       - name: Build Pure Native iOS Release App (.app)
         run: |
